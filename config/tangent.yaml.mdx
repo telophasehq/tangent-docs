@@ -1,11 +1,12 @@
 ---
 title: "tangent.yaml"
-description: "Configure Tangent using its configuration file tangent.yaml"
+description: "Configure Tangent using tangent.yaml"
 ---
-A `tangent.yaml` file is required to run `tangent run`, `tangent bench`, `tangent test`, and `tangent compile-wasm`
 
 ## Fields
+
 ### entry_point (required)
+
 Path to your WASM plugin entrypoint (e.g., `wrapper.go`, `main.py`, `.` for module root). This is used by `compile-wasm` command.
 
 ```yaml tangent.yaml icon="settings"
@@ -13,56 +14,74 @@ entry_point: main.py
 ```
 
 ### module_type (required)
+
 The language used by your WASM plugin. This is used by `compile-wasm` command.
 
-Options: `go`, `python`
+Options: `go`, `py`
 
 ```yaml tangent.yaml icon="settings"
 module_type: go
 ```
 
 ### batch_size (optional)
-Log batch size to be passed into your WASM plugin in KB (default: 256).
 
-This can be used to tune performance.
+Tangent buffers logs in memory before flushing to your WASM plugin. Logs are flushed when either `batch_size` or `batch_age` is reached.
+
+`batch_size` configures the maximum size of logs to buffer before flushing, in KB (default: 256).
 
 ```yaml tangent.yaml icon="settings"
 batch_size: 1024
 ```
 
+### batch_age (optional)
 
-<ResponseField name="batch_age" type="number">
-  Max batch age in milliseconds (default: 5)
-</ResponseField>
-<ResponseField name="workers" type="number">
-  Worker threads (default: number of CPUs)
-</ResponseField>
-<ResponseField name="sources" type="map" required>
-  Source blocks
+Tangent buffers logs in memory before flushing to your WASM plugin. Logs are flushed when either `batch_size` or `batch_age` is reached.
 
-  Example:
-  ```yaml
-  sources:
-    socket_main:
-      type: socket
-      socket_path: "/tmp/sidecar.sock"
-  ```
-</ResponseField>
-<ResponseField name="sinks" type="map" required>
-  Sink blocks
+`batch_age` configures the maximum time logs will be buffered before flushing, in milliseconds (default: 5)
 
-  Example:
-  ```yaml
-  sinks:
-    s3_bucket:
-      type: s3
-      bucket_name: my-bucket
-  ```
-</ResponseField>
+```yaml tangent.yaml icon="settings"
+batch_age: 5
+```
 
-Full Example:
+### workers (optional)
 
-```yaml
+Number of workers threads to spawn (default: number of CPUs)
+
+```yaml tangent.yaml icon="settings"
+workers: 16
+```
+
+### sources (required)
+
+Configure log sources. See [Sources](/sources/overview)
+
+Pulling from multiple sources is not yet supported.
+
+Example:
+```yaml tangent.yaml icon="settings"
+sources:
+  socket_main:
+    type: socket
+    socket_path: "/tmp/sidecar.sock"
+```
+
+### sinks (required)
+
+Configure log sinks. See [Sources](/sinks/overview)
+
+Sinking into multiple sinks is not yet supported.
+
+Example:
+```yaml tangent.yaml icon="settings"
+sinks:
+  s3_bucket:
+    type: s3
+    bucket_name: my-bucket
+```
+
+## Full Example:
+
+```yaml tangent.yaml icon="settings"
 module_type: go
 entry_point: .
 batch_size: 1024      # KB

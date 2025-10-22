@@ -1,0 +1,51 @@
+---
+title: "Installation"
+description: "Install Tangent."
+---
+
+## Overview
+
+Tangent ships as a single executable, `tangent`.
+
+## Installation
+
+<Tabs>
+  <Tab title="macOS & Linux">
+    <CodeGroup>
+
+    ```bash curl
+    curl --proto '=https' --tlsv1.2 -LsSf https://github.com/Santiago-Labs/tangent/releases/download/latest/tangent-cli-installer.sh | sh
+    ```
+
+    </CodeGroup>
+  </Tab>
+  <Tab title="Homebrew">
+    <CodeGroup>
+
+    ```bash sh
+    brew tap telophashq/telophase
+    brew install tangent-cli
+    ```
+
+    </CodeGroup>
+  </Tab>
+  <Tab title="Docker">
+    <CodeGroup>
+
+    ```bash docker
+    docker pull ghcr.io/telophasehq/tangent-toolchain
+    docker run --rm --init ghcr.io/telophasehq/tangent-toolchain command
+    ```
+
+    </CodeGroup>
+  </Tab>
+  <Tab title="Cargo">
+    <CodeGroup>
+
+    ```bash cargo
+    cargo install --git https://github.com/telophasehq/tangent tangent-cli
+    ```
+
+    </CodeGroup>
+  </Tab>
+</Tabs>

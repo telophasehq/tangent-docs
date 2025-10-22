@@ -97,9 +97,7 @@
       "copy",
       "view",
       "chatgpt",
-      "claude",
-      "cursor",
-      "vscode"
+      "claude"
     ]
   },
   "footer": {
