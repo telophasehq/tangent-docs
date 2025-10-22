@@ -1,0 +1,81 @@
+---
+title: "tangent.yaml"
+description: "Configure Tangent using its configuration file tangent.yaml"
+---
+A `tangent.yaml` file is required to run `tangent run`, `tangent bench`, `tangent test`, and `tangent compile-wasm`
+
+## Fields
+### entry_point (required)
+Path to your WASM plugin entrypoint (e.g., `wrapper.go`, `main.py`, `.` for module root). This is used by `compile-wasm` command.
+
+```yaml tangent.yaml icon="settings"
+entry_point: main.py
+```
+
+### module_type (required)
+The language used by your WASM plugin. This is used by `compile-wasm` command.
+
+Options: `go`, `python`
+
+```yaml tangent.yaml icon="settings"
+module_type: go
+```
+
+### batch_size (optional)
+Log batch size to be passed into your WASM plugin in KB (default: 256).
+
+This can be used to tune performance.
+
+```yaml tangent.yaml icon="settings"
+batch_size: 1024
+```
+
+
+<ResponseField name="batch_age" type="number">
+  Max batch age in milliseconds (default: 5)
+</ResponseField>
+<ResponseField name="workers" type="number">
+  Worker threads (default: number of CPUs)
+</ResponseField>
+<ResponseField name="sources" type="map" required>
+  Source blocks
+
+  Example:
+  ```yaml
+  sources:
+    socket_main:
+      type: socket
+      socket_path: "/tmp/sidecar.sock"
+  ```
+</ResponseField>
+<ResponseField name="sinks" type="map" required>
+  Sink blocks
+
+  Example:
+  ```yaml
+  sinks:
+    s3_bucket:
+      type: s3
+      bucket_name: my-bucket
+  ```
+</ResponseField>
+
+Full Example:
+
+```yaml
+module_type: go
+entry_point: .
+batch_size: 1024      # KB
+batch_age: 10         # ms
+workers: 4
+
+sources:
+  socket_main:
+    type: socket
+    socket_path: "/tmp/sidecar.sock"
+
+sinks:
+  s3_bucket:
+    type: s3
+    bucket_name: my-bucket
+```

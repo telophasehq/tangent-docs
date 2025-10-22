@@ -1,0 +1,8 @@
+---
+title: "Authoring a WASM Plugin"
+description: "How to write a new plugin"
+---
+
+Processors implement the `processor` world defined in `assets/wit/processor.wit`:
+- Input: `process-logs(logs: list<u8>)`
+- Output: `result<list<output>, string>` where each `output` contains `data` and a `sink` variant (s3, file, blackhole, default)

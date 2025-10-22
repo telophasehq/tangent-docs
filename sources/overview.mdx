@@ -1,0 +1,36 @@
+---
+title: "Sources"
+description: "Configure where Tangent pulls data"
+---
+
+Supported data sources:
+
+- [SQS](/sources/sqs)
+- [MSK](/sources/msk)
+- [Socket](/sources/socket)
+- [File](/sources/file)
+
+
+- `type: socket`
+  - `socket_path` (string, default: `/tmp/sidecar.sock`)
+- `type: file`
+  - `path` (string)
+  - `decoding` (object, optional)
+    - `format` (auto|ndjson|json|json-array|text|msgpack; default `auto`)
+    - `compression` (auto|none|gzip|zstd; default `auto`)
+- `type: sqs`
+  - `queue_url` (string)
+  - `wait_time_seconds` (number, default: 20)
+  - `visibility_timeout` (number, default: 60)
+  - `decoding` (same shape as file source)
+- `type: msk` (Kafka / Amazon MSK)
+  - `bootstrap_servers` (string)
+  - `topic` (string)
+  - `group_id` (string, default: `tangent-node`)
+  - `security_protocol` (string, default: `PLAINTEXT`)
+  - `auth` (object)
+    - `mode: scram`
+    - `sasl_mechanism` (string, default: `SCRAM-SHA-512`)
+    - `username` (string)
+    - `password` (string; stored securely at runtime)
+  - `decoding` (same shape as file source)

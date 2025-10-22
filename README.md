@@ -1,23 +1,6 @@
-<h1 align="center">
-Tangent</h1>
+# Tangent
 
-<div align="center">
-<a href="https://docs.telophasehq.com">
-Documentation</a>
-
- <span>
-  •  </span>
-
- <a href="https://discord.gg/yA8dFdHP">
-Discord</a>
-
- <span>
-  •  </span>
-
- <a href="https://github.com/telophasehq/tangent/issues/new">
-Issues</a>
-
-</div>
+Discord 
 
 ## What is Tangent?
 
