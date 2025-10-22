@@ -15,6 +15,7 @@ description: "Write output to an S3 bucket"
 - `default` (bool; if true, used when a processor output does not specify a sink)
 
 Example:
+
 ```yaml tangent.yaml
 sinks:
   s3_staging:
@@ -25,3 +26,5 @@ sinks:
     compression: gzip
     default: false
 ```
+
+## Durability Guarantees
