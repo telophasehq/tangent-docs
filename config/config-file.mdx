@@ -1,5 +1,5 @@
 ---
-title: "tangent yaml"
+title: "tangent.yaml"
 description: "Configure Tangent using tangent.yaml"
 ---
 
@@ -9,7 +9,7 @@ description: "Configure Tangent using tangent.yaml"
 
 Path to your WASM plugin entrypoint (e.g., `wrapper.go`, `main.py`, `.` for module root). This is used by `compile-wasm` command.
 
-```yaml tangent.yaml icon="settings"
+```yaml tangent.yaml icon=settings
 entry_point: main.py
 ```
 
@@ -19,7 +19,7 @@ The language used by your WASM plugin. This is used by `compile-wasm` command.
 
 Options: `go`, `py`
 
-```yaml tangent.yaml icon="settings"
+```yaml tangent.yaml icon=settings
 module_type: go
 ```
 
@@ -29,7 +29,7 @@ Tangent buffers logs in memory before flushing to your WASM plugin. Logs are flu
 
 `batch_size` configures the maximum size of logs to buffer before flushing, in KB (default: 256).
 
-```yaml tangent.yaml icon="settings"
+```yaml tangent.yaml icon=settings
 batch_size: 1024
 ```
 
@@ -39,7 +39,7 @@ Tangent buffers logs in memory before flushing to your WASM plugin. Logs are flu
 
 `batch_age` configures the maximum time logs will be buffered before flushing, in milliseconds (default: 5)
 
-```yaml tangent.yaml icon="settings"
+```yaml tangent.yaml icon=settings
 batch_age: 5
 ```
 
@@ -47,7 +47,7 @@ batch_age: 5
 
 Number of workers threads to spawn (default: number of CPUs)
 
-```yaml tangent.yaml icon="settings"
+```yaml tangent.yaml icon=settings
 workers: 16
 ```
 
@@ -59,7 +59,7 @@ Pulling from multiple sources is not yet supported.
 
 Example:
 
-```yaml tangent.yaml icon="settings"
+```yaml tangent.yaml icon=settings
 sources:
   socket_main:
     type: socket
@@ -74,7 +74,7 @@ Sinking into multiple sinks is not yet supported.
 
 Example:
 
-```yaml tangent.yaml icon="settings"
+```yaml tangent.yaml icon=settings
 sinks:
   s3_bucket:
     type: s3
@@ -83,7 +83,7 @@ sinks:
 
 ## Full Example:
 
-```yaml tangent.yaml icon="settings"
+```yaml tangent.yaml icon=settings
 module_type: go
 entry_point: .
 batch_size: 1024      # KB
