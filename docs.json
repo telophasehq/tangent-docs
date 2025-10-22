@@ -21,7 +21,7 @@
             "pages": [
               "index",
               "quickstart",
-              "installation"
+              "install"
             ]
           },
           {
@@ -31,13 +31,8 @@
               "cli/run",
               "cli/bench",
               "cli/test",
-              "cli/scaffold"
-            ]
-          },
-          {
-            "group": "Configuration",
-            "pages": [
-              "config/tangent-yaml"
+              "cli/scaffold",
+              "tangent.yaml"
             ]
           },
           {
