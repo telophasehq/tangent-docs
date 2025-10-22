@@ -37,7 +37,7 @@
           {
             "group": "Configuration",
             "pages": [
-              "config/tangent.yaml"
+              "config/tangent-yaml"
             ]
           },
           {
