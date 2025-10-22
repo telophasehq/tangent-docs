@@ -69,8 +69,8 @@
     ]
   },
   "logo": {
-    "light": "tangent-hero.svg",
-    "dark": "tangent-hero.svg"
+    "light": "logo-light.svg",
+    "dark": "logo-dark.svg"
   },
   "navbar": {
     "links": [
