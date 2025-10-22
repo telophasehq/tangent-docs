@@ -65,16 +65,7 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://telophasehq.com/docs",
-          "icon": "book-open-cover"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "tangent-hero.svg",
@@ -83,8 +74,8 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:support@telophase.dev"
+        "label": "Help",
+        "href": "https://discord.gg/yA8dFdHP"
       }
     ]
   },
@@ -100,7 +91,7 @@
     "socials": {
       "x": "https://x.com/telophasehq",
       "github": "https://github.com/telophasehq",
-      "linkedin": "https://linkedin.com/company/santiago-labs"
+      "discord": "https://discord.gg/yA8dFdHP"
     }
   }
 }
