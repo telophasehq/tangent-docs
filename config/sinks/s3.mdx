@@ -1,0 +1,27 @@
+---
+title: "S3 Sink"
+description: "Write output to an S3 bucket"
+---
+
+- `type: s3`
+- `bucket_name` (string)
+- `region` (string, optional)
+- `wal_path` (string, default: `/tmp/wal`)
+- `max_file_age_seconds` (number, default: 60)
+- `encoding` (ndjson|json|avro|parquet; default: ndjson)
+- `compression` (none|gzip|zstd; default: zstd level 3)
+- `object_max_bytes` (number; default: 134,217,728)
+- `in_flight_limit` (number; default: 16)
+- `default` (bool; if true, used when a processor output does not specify a sink)
+
+Example:
+```yaml tangent.yaml
+sinks:
+  s3_staging:
+    type: s3
+    bucket_name: my-bucket
+    region: us-west-2
+    encoding: parquet
+    compression: gzip
+    default: false
+```

@@ -1,0 +1,17 @@
+---
+title: "File Sink"
+description: "Write output to a local file"
+---
+
+- `type: file`
+- `path` (string)
+- `default` (bool; if true, used when a processor output does not specify a sink)
+
+Example:
+```yaml tangent.yaml
+sinks:
+  local_file:
+    type: file
+    path: /tmp/out.json
+    default: true
+```
