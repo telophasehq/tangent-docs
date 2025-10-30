@@ -26,3 +26,42 @@ h1, h2, h3 {
   backdrop-filter: none !important;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 }
+
+/* 1) Center the whole content column and cap its width */
+main .content,
+main .content > .container,
+main .content > article,
+main .content > section {
+  max-width: 1100px;          /* tweak: 980–1200px works well */
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 24px;          /* keep some breathing room */
+  padding-right: 24px;
+}
+
+/* 2) Keep long text at a comfortable reading width */
+.prose, .markdown, article .prose :where(p, ul, ol, blockquote) {
+  max-width: 72ch;
+}
+
+/* 3) Center the page hero/header row too */
+.header,
+.page-header,
+main .content .doc-header,
+main .content .page-title {
+  max-width: 1100px;
+  margin-inline: auto !important;
+  padding-inline: 24px;
+}
+
+/* 4) Card grids: prevent full-bleed stretch, center the grid */
+main .content .grid {
+  max-width: 1100px;
+  margin-inline: auto;
+  justify-content: center;
+}
+
+/* 5) Leave navbar + sidebar widths alone (solid bars) */
+.navbar { background: #0C0514 !important; }
+.sidebar { background: #0C0514 !important; border-right: 1px solid rgba(255,255,255,0.06); }
+
