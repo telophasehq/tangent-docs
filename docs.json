@@ -33,7 +33,7 @@
               "cli/plugin/test",
               "cli/run",
               "cli/bench",
-              { "page": "cli/tangent-yaml", "label": "tangent.yaml" }
+              "cli/tangent-yaml"
             ]
           },
           {
