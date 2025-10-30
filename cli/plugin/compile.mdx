@@ -1,0 +1,21 @@
+---
+title: 'Tangent compile-wasm'
+description: 'Compile WASM Plugin'
+---
+
+`compile-wasm` builds your plugin into a `.wasm` artifact the runtime can load.
+
+```bash
+tangent plugin compile --config tangent.yaml --wit .tangent/wit
+````
+
+**Command Options**
+
+* `--config <file>` (required) Path to `tangent.yaml`
+* `--wit <dir>` (optional) Path to the WIT interfaces used by your plugin. If using a plugin generated from `tangent plugin scaffold`, the wit path is `.tangent/wit`
+
+**Outputs**
+
+* `./plugins/<name>.component.wasm` (default) — consumed by `tangent run`
+
+See also: [tangent plugin test](/cli/test), [tangent run](/cli/run).

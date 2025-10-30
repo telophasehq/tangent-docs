@@ -40,7 +40,6 @@
             "group": "WASM Plugins",
             "pages": [
               "plugins/authoring",
-              "plugins/examples",
               "plugins/community"
             ]
           },

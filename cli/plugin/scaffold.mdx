@@ -1,0 +1,21 @@
+---
+title: "Tangent scaffold"
+description: "Create new WASM plugin"
+---
+
+Create a minimal plugin project in **Go** or **Python** with tests and build scripts.
+
+```bash
+tangent plugin scaffold --lang go --name my-plugin
+# or:
+tangent plugin scaffold --lang python --name my-plugin
+````
+
+What you get:
+
+* Plugin interface stub (`process_logs`)
+* Test fixtures (`tests/`)
+* WIT assets (`.tangent/wit`)
+* `tangent.yaml` to compile, test, bench, and run the plugin.
+
+Then run: `compile-wasm` → `test` → `bench` → `run`.

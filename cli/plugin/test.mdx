@@ -1,0 +1,30 @@
+---
+title: 'Tangent test'
+description: 'Test WASM plugin correctness'
+---
+
+Execute plugin tests against fixtures to prevent regressions.
+
+```bash
+tangent plugin test --config tangent.yaml
+````
+
+Tests are configured in `tangent.yaml`
+Example:
+```yaml
+plugins:
+  zeek:
+    module_type: go
+    path: .
+    tests:
+      - input: tests/conn.json
+        expected:  tests/conn_out.json
+```
+
+**Good tests cover**
+
+* Input edge cases (missing fields, arrays, nulls)
+* Schema mapping (e.g., OCSF)
+* Error handling (drop/route to different sinks, annotate with reasons)
+
+Run tests locally and in CI.

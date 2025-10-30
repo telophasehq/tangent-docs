@@ -3,6 +3,7 @@ title: "S3 Sink"
 description: "Write output to an S3 bucket"
 ---
 
+**Config**
 - `type: s3`
 - `bucket_name` (string)
 - `region` (string, optional)
@@ -12,7 +13,6 @@ description: "Write output to an S3 bucket"
 - `compression` (none|gzip|zstd; default: zstd level 3)
 - `object_max_bytes` (number; default: 134,217,728)
 - `in_flight_limit` (number; default: 16)
-- `default` (bool; if true, used when a processor output does not specify a sink)
 
 Example:
 
@@ -24,7 +24,8 @@ sinks:
     region: us-west-2
     encoding: parquet
     compression: gzip
-    default: false
 ```
 
 ## Durability Guarantees
+> **At‑least‑once delivery**
+> Tangent uses a write-ahead log for S3 uploads for durability on restarts.

@@ -3,3 +3,23 @@ title: 'Tangent bench'
 description: 'Benchmark performance of WASM plugin'
 ---
 
+Run synthetic load against your pipeline to validate throughput and latency.
+
+```bash
+tangent bench \
+  --config tangent.yaml \
+  --seconds 30 \
+  --payload tests/input.json
+````
+
+**Output (example)**
+
+```
+INFO tangent_bench::socket: ===Starting socket_main benchmark===
+INFO tangent_bench::socket: uds="/tmp/sidecar.sock" payload="examples/golang/tests/input.json" bytes/line=106 connections=10
+end-to-end: uploaded=2340.59 MiB (2340.59 MiB uncompressed) over 30.02s → 77.98 MiB/s (77.98 MiB/s uncompressed) (amplification x0.92343)
+producer bytes (consumed): 2534.67 MiB → 84.44 MiB/s
+guest: bytes_in=2531.66 MiB, avg_latency=16.941 ms (over 12215 calls)
+```
+
+Bench in CI before you ship changes to a critical transform.

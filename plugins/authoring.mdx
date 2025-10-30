@@ -3,18 +3,151 @@ title: "Authoring a WASM Plugin"
 description: "How to write a new plugin"
 ---
 
-Processors implement the `processor` world defined in `assets/wit/processor.wit`:
-- Input: `process-logs(logs: list<u8>)`
-- Output: `result<list<output>, string>` where each `output` contains `data` and a `sink` variant (s3, file, blackhole, default)
+Processors implement the `processor` **interface** defined in `.tangent/wit/processor.wit`.
 
-<Steps>
-  <Step title="Scaffold">
-    These are instructions or content that only pertain to the first step.
-  </Step>
-  <Step title="Compile">
-    These are instructions or content that only pertain to the first step.
-  </Step>
-  <Step title="Run">
-    These are instructions or content that only pertain to the first step.
-  </Step>
-</Steps>
+## Interface
+
+The interface has three methods to implement
+
+### Metadata
+
+Name and version of your plugin
+
+**Python**
+
+```python
+def metadata(self) -> mapper.Meta:
+  return mapper.Meta(name="python-example", version="0.1.0")
+```
+
+### Probe
+
+Used to tell the runtime which logs to send to your plugin.
+
+**Python**
+
+```python
+def probe(self) -> List[mapper.Selector]:
+  # Match logs where source.name == "myservice"
+  return [
+      mapper.Selector(
+          any=[],
+          all=[
+              mapper.Pred_Eq(
+                  ("source.name", log.Scalar_Str("myservice"))
+              )
+          ],
+          none=[],
+      )
+  ]
+```
+
+Will send all logs with
+
+```json
+{"source.name": "myservice"}
+```
+
+or
+
+```json
+{"source": {"name": "my service"}}
+```
+
+### ProcessLogs
+
+This is the business logic of your plugin. It takes in a `log.Logview`, which allows it to read `json` data provided by the host. This function can return scalars, lists, or maps.
+
+Performance note: Always prefer to fetch scalar values from the log. Scalars do not create heap allocations. Fetching lists and maps allocate on the heap, which hurts performance.
+
+**Go**
+
+```go
+// scaffolded project provides imports and types
+mapper.Exports.ProcessLogs = func(input cm.List[log.Logview]) (res cm.Result[cm.List[uint8], cm.List[uint8], string]) {
+    buf := bufPool.Get().(*bytes.Buffer)
+    buf.Reset()
+    
+    // take an owned copy of the input.
+    var items []log.Logview
+    items = append(items, input.Slice()...)
+    for idx := range items {
+        var out ExampleOutput
+    
+        lv := log.Logview(items[idx])
+    
+        // Get String
+        msg := tangenthelpers.GetString(lv, "msg")
+        if msg != nil {
+            out.Msg = *msg
+        }
+      }
+      res.SetOK(cm.ToList(buf.Bytes()))
+      bufPool.Put(buf)
+      return
+}
+```
+
+**Python**
+
+```python
+def process_logs(self, logs: List[log.Logview]) -> bytes:
+  buf = bytearray()
+  for lv in logs:
+      with lv:
+          out = {
+              "message": "",
+              "level": "",
+              "seen": 0,
+              "duration": 0.0,
+              "service": "",
+              "tags": None,
+          }
+
+          # get string
+          s = lv.get("msg")
+          if s is not None and hasattr(s, "value"):
+              out["message"] = s.value
+
+          # get dot path
+          s = lv.get("msg.level")
+          if s is not None and hasattr(s, "value"):
+              out["level"] = s.value
+
+          # get int
+          s = lv.get("seen")
+          if s is not None and hasattr(s, "value"):
+              out["seen"] = s.value
+
+          # get float
+          s = lv.get("duration")
+          if s is not None and hasattr(s, "value"):
+              out["duration"] = s.value
+
+          # get value from nested json
+          s = lv.get("source.name")
+          if s is not None and hasattr(s, "value"):
+              out["service"] = s.value
+
+          # get string list
+          lst = lv.get_list("tags")
+          if lst is not None:
+              tags: List[str] = []
+              for item in lst:
+                  tags.append(item.value)
+              out["tags"] = tags
+
+          buf.extend(json.dumps(out).encode('utf-8') + b"\n")
+  return bytes(buf)
+```
+
+### Local dev loop
+
+```bash
+tangent plugin compile --config tangent.yaml --wit ./.tangent/wit
+tangent plugin test --config tangent.yaml
+tangent run --config tangent.yaml
+
+# In a separate window
+tangent bench --config tangent.yaml --seconds 30 --payload tests/input.json
+```

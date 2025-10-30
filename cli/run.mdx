@@ -3,3 +3,21 @@ title: 'Tangent run'
 description: 'Tangent runtime'
 ---
 
+Start the runtime with your configured **sources → plugins → sinks**.
+
+```bash
+tangent run --config tangent.yaml
+````
+
+**What it does**
+
+* Pull data from **sources**
+* Passes data to **plugins**
+* Writes to the **sink** named in each output (or the **default** sink)
+
+**Tips**
+
+* Use `RUST_LOG=info` (or `debug`) to see more runtime logs.
+* Start with the **File** or **Socket** source, then swap in SQS/MSK.
+
+See also: [tangent.yaml](/cli/tangent.yaml), [bench](/cli/bench), [test](/cli/test).
