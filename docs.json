@@ -89,7 +89,6 @@
   "background": {
     "decoration": "grid",
     "color": {
-      "light": "#F6FAFF",
       "dark":  "#050A16"
     }
   },
