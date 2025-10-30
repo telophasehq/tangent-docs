@@ -3,55 +3,100 @@ title: "tangent.yaml"
 description: "Configure Tangent using tangent.yaml"
 ---
 
-## Fields
+## Runtime
 
-### `path` (required)
+### `plugins_path`
+Required
 
-Path to your WASM plugin entrypoint (e.g., `wrapper.go`, `main.py`, `.` for module root). This is used by `compile-wasm` command.
-
-```yaml tangent.yaml icon=settings
-entry_point: main.py
-```
-
-### `module_type` (required)
-
-The language used by your WASM plugin. This is used by `compile-wasm` command.
-
-Options: `go`, `py`
+Path to your compiled plugins. default: `plugins/`
 
 ```yaml tangent.yaml icon=settings
-module_type: go
+runtime:
+  path: plugins/
 ```
 
-### `batch_size` (optional)
+### `batch_size`
 
 Tangent buffers logs in memory before flushing to your WASM plugin. Logs are flushed when either `batch_size` or `batch_age` is reached.
 
 `batch_size` configures the maximum size of logs to buffer before flushing, in KB (default: 256).
 
 ```yaml tangent.yaml icon=settings
-batch_size: 1024
+runtime:
+  batch_size: 1024
 ```
 
-### `batch_age` (optional)
+### `batch_age`
 
 Tangent buffers logs in memory before flushing to your WASM plugin. Logs are flushed when either `batch_size` or `batch_age` is reached.
 
 `batch_age` configures the maximum time logs will be buffered before flushing, in milliseconds (default: 5)
 
 ```yaml tangent.yaml icon=settings
-batch_age: 5
+runtime:
+  batch_age: 5
 ```
 
-### `workers` (optional)
+### `workers`
 
 Number of workers threads to spawn (default: number of CPUs)
 
 ```yaml tangent.yaml icon=settings
-workers: 16
+runtime:
+  workers: 16
 ```
 
-### `sources` (required)
+## `plugins`
+
+### `module_type`
+Required
+
+The language used by your WASM plugin. This is used by `compile-wasm` command.
+
+Options: `go`, `py`
+
+```yaml tangent.yaml icon=settings
+plugins:
+  my_plugin:
+    module_type: go
+```
+
+### `path`
+Required
+
+Path to your plugin _entry point_. For Golang, this is `.`. For Python, its the name of a file e.g. `mapper.py`.
+
+```yaml tangent.yaml icon=settings
+plugins:
+  my_plugin:
+    path: mapper.py
+```
+
+### `tests`
+
+Path to your plugin test `input` and `expected` output. 
+
+
+```yaml tangent.yaml icon=settings
+plugins:
+  my_plugin:
+    tests:
+      - input: tests/input.json
+        expected: tests/expected.json
+```
+
+Example:
+```yaml tangent.yaml icon=settings
+plugins:
+  golang: # name of your plugin
+    module_type: go
+    path: .
+    tests:
+      - input: tests/input.json
+        expected: tests/expected.json
+```
+
+## `sources`
 
 Configure log sources. See [Sources](/sources/overview)
 
@@ -66,7 +111,7 @@ sources:
     socket_path: "/tmp/sidecar.sock"
 ```
 
-### `sinks` (required)
+## `sinks`
 
 Configure log sinks. See [Sources](/sinks/overview)
 
@@ -81,22 +126,58 @@ sinks:
     bucket_name: my-bucket
 ```
 
+## `dag`
+Configures the 
+
+Example
+```yaml tangent.yaml icon=settings
+dag:
+  - from:
+      kind: source
+      name: socket_main
+    to:
+      - kind: plugin
+        name: golang
+
+  - from:
+      kind: plugin
+      name: golang
+    to:
+      - kind: sink
+        name: blackhole
+```
+
 ## Full Example:
 
 ```yaml tangent.yaml icon=settings
-module_type: go
-entry_point: .
-batch_size: 1024      # KB
-batch_age: 10         # ms
-workers: 4
-
+runtime:
+  plugins_path: "plugins/"
+plugins:
+  golang:
+    module_type: go
+    path: .
+    tests:
+      - input: tests/input.json
+        expected: tests/expected.json
 sources:
   socket_main:
     type: socket
-    socket_path: "/tmp/sidecar.sock"
-
+    path: "/tmp/sidecar.sock"
 sinks:
-  s3_bucket:
-    type: s3
-    bucket_name: my-bucket
+  blackhole:
+    type: blackhole
+dag:
+  - from:
+      kind: source
+      name: socket_main
+    to:
+      - kind: plugin
+        name: golang
+
+  - from:
+      kind: plugin
+      name: golang
+    to:
+      - kind: sink
+        name: blackhole
 ```

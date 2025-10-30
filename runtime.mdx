@@ -1,5 +1,129 @@
 ---
-title: 'Tangent Runtime'
-description: '.'
+title: "Tangent Runtime"
+description: "Deep dive into the Tangent Runtime"
 ---
 
+## Tangent runtime: how we get near‑native speed
+
+This doc explains, in concrete terms, how Tangent’s runtime achieves near‑native throughput while running user plugins in WebAssembly. The audience is experienced, performance‑sensitive engineers who want to see the real mechanics: data movement, copying behavior, SIMD, borrowing across the host/guest boundary, batching/scheduling, and fan‑out.
+
+**tl;dr**
+
+- Data is not copied into WASM guest memory. Guests receive handles to host‑owned views and ask the host for just the scalars they need. Scalars (except string) avoid heap allocations.
+- Plugins subscribe to logs with JSON field selectors. This subscription is handled on the host.
+- Data is only copied once if outputting NDJSON. Twice for other formats.
+
+In practice, end‑to‑end throughput is dominated by user logic, not Wasm overhead. When user logic is written with these constraints in mind, we routinely see performance in the same class as native services, and sometimes _faster_.
+
+## Architecture at a glance
+
+- **Sources → Workers → Plugins → Sinks**
+- Workers group records by configured mappers/selectors, invoke guest components in batches, then the router fans out results to sinks.
+
+## Data movement and copying
+
+### Input ingestion and JSON parse
+
+- Incoming frames are accumulated as `BytesMut` buffers and parsed with `simd-json` using borrowed parsing. The parser returns a `BorrowedValue` that references the original byte buffer; we do not materialize a new heap of JSON objects.
+- We pin the original bytes and the parsed view together, so the borrowed tree remains valid without copying. Concretely, the host wraps the raw bytes and the `BorrowedValue` in a small `Arc` so lifetimes are tied and access is safe from the guest side via a resource handle.
+
+Key effect: parsing is SIMD‑accelerated and allocation‑light, and the parsed structure is a zero‑copy view into the original data.
+
+### No copies into the guest
+
+- The guest does not receive the JSON bytes. Instead, the guest receives `resource` handles (via the Wasm Component Model) to host‑managed `LogView`s.
+- All field access (has/get/keys/…) is implemented by host functions. The guest calls into the host to read scalars by path. Only small, immediate values cross the boundary.
+- Strings do involve allocation when crossing the boundary (they are returned as owned strings to the guest by design), but this is far cheaper than copying entire JSON documents. Numeric and boolean scalars cross as immediate values.
+
+This pattern avoids the classic Wasm bottleneck of copying large payloads into guest memory.
+
+### Batch grouping and selective processing
+
+- Workers batch frames by size and age. On flush, each record is parsed once and routed to the set of mappers whose selectors match. This pushes filtering into the host side, further reducing guest work and cross‑boundary calls.
+
+### Guest output frames
+
+- Mapper plugins return output frames as contiguous byte vectors. We convert these to `Bytes`/`BytesMut` for downstream routing. This is a single materialization per output frame, by design.
+
+## Borrowed values: safety and lifetimes
+
+We rely on a standard “borrowed JSON” technique:
+
+- Parse JSON directly against the mutable input buffer to build a `BorrowedValue` tree that points at the input’s bytes.
+- Freeze the buffer into an immutable, ref‑counted `Bytes` and store it alongside the borrowed tree inside an `Arc`.
+- Expose that pair to the guest as a `resource` handle. Host methods use the handle to look up fields and return scalars.
+
+Why it’s safe:
+
+- The input bytes are reference‑counted and pinned for at least as long as the guest holds the handle.
+- The guest cannot mutate the underlying bytes; it only holds an opaque handle and can request reads via host functions.
+- Resource lifetimes are explicit; when the guest drops the handle, the host decrements and eventually frees the underlying view/buffer.
+
+Practical implication: we get zero‑copy access to JSON fields, and the cost of crossing the boundary is proportional to the number of scalars actually read, not the size of the input.
+
+## Execution model: batching, selectors, and mapper calls
+
+### Worker pool and batching
+
+- A pool sized to the machine’s CPU count consumes a channel.
+- Each worker accumulates a batch until either the size threshold (bytes) or the age threshold (wall clock) is met.
+- Batching amortizes the fixed overhead of cross‑boundary calls and improves cache locality for parsing and selector evaluation.
+
+### Selector evaluation
+
+- For each record we evaluate compiled selectors against the borrowed view (has/eq/prefix/in/gt/regex). Only matching records are included for a given mapper.
+- This keeps guest work focused and reduces the number of handles passed into guest code.
+
+### Guest invocation
+
+- Workers hold a `Store`\+`Processor` per mapper. On flush, they pass a vector of `resource LogView` handles to the guest’s `process_logs` function.
+- Latency and size metrics are recorded per worker for visibility.
+
+## Routing, fan‑out, and acks
+
+### Router behavior
+
+- The router maps a `NodeRef` (plugin) to one or more downstream nodes (plugins or sinks).
+- If there is a single downstream, the frame is forwarded directly.
+- If there are multiple downstreams, frames are duplicated per downstream delivery. Today, duplication happens at the frame boundary; this is a conscious trade‑off for simplicity and isolation of downstream stages.
+
+Note on duplication: where possible, we use reference‑counted buffers to avoid deep copies. For some buffer types and paths, duplication may materialize new buffers. We keep fan‑out widths reasonable and recommend designing topologies to minimize unnecessary wide duplication of large frames.
+
+### Ack semantics
+
+- Upstream acks are reference‑counted: each downstream delivery counts as one. When all deliveries complete, the shared ack triggers and the source is acknowledged exactly once.
+- This provides backpressure and prevents unbounded buffering.
+
+## Trade‑offs and edge cases
+
+- **Strings cross as owned**: Reading large strings repeatedly into the guest will allocate.
+- **Fan‑out duplication**: Wide fan‑outs can multiply bytes in memory. Prefer routing trees that avoid unnecessary broadcast of large frames, or convert frames to compact encodings before fan‑out.
+- **Regex costs**: Regex predicates are compiled once, but matching is still non‑trivial. Use them judiciously and combine with cheaper predicates (`has`, `prefix`, numeric comparisons) to pre‑filter.
+- **Huge objects**: Extremely large JSON objects may reduce the effectiveness of borrowing. Consider pre‑normalizing at the source or switching to a more compact input encoding if you control the producer.
+
+## Writing fast plugins (guest code)
+
+Guidelines for authors:
+
+- Pull as few scalars as possible; prefer host‑side selectors for filtering.
+- Avoid building owned maps/arrays in the guest if you only need a subset of fields.
+- When emitting output, write in a single pass into a contiguous buffer; avoid per‑field allocations.
+- Keep `process_logs` pure and side‑effect free; move I/O to sinks for better parallelism and backpressure.
+
+## Observability
+
+- Per‑worker guest latency and input/output byte counters are recorded, letting you see when the guest becomes the bottleneck.
+- Batch sizes and flush timings are tunable; use metrics to find the optimal thresholds for your workload.
+
+## Benchmarks (how to measure)
+
+If you want to validate performance on your hardware:
+
+- Use a realistic dataset (JSON Lines). There's sample input data provided in plugins `tests/`.
+- Disable debug logging and compile in release mode.
+- Vary batch size and age; observe throughput and tail latencies.
+- Compare against a native baseline that uses `simd-json` and equivalent logic. Expect differences to be driven by guest logic and fan‑out patterns rather than boundary overhead.
+
+The boundary overhead in this design is small and mostly constant per scalar accessed; you should see line‑rate scaling until CPU saturates on parsing or guest logic.
+
+---
