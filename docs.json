@@ -37,7 +37,7 @@
             ]
           },
           {
-            "group": "WASM Plugins",
+            "group": "Plugins",
             "pages": [
               "plugins/authoring",
               "plugins/community"
