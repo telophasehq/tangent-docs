@@ -10,8 +10,17 @@ This should be set to `file`
 <ParamField path="path" type="string" required>
 Filepath to sink data
 </ParamField>
+<ParamField path="encoding" type="object">
+Controls how Tangent serializes records emitted by this source. See [Encoding](/sinks/encoding).
+</ParamField>
 
-**Example**
+<ParamField path="compression" type="object">
+Controls how Tangent compresses payloads emitted by this source. See [Compression](/sinks/compression).
+</ParamField>
+
+---
+
+## Example
 
 ```yaml
 sinks:

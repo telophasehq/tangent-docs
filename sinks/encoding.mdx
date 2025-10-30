@@ -1,0 +1,110 @@
+---
+title: "Encoding"
+description: "Configure how Tangent formats and compresses sink output before upload."
+---
+
+The `encoding` block defines **how Tangent serializes and compresses records** before writing them to a sink (e.g., S3, File).  
+It controls file format, schema handling (for Avro/Parquet), and data compression.
+
+---
+
+<ParamField path="encoding.type" type="string" required>
+Output format for serialized records.  
+Defaults to `ndjson`.
+
+**Options**
+- `ndjson` — newline-delimited JSON; one record per line  
+- `json` — standard JSON array of records  
+- `avro` — Apache Avro binary encoding (requires schema)  
+- `parquet` — Apache Parquet columnar format (requires schema)
+</ParamField>
+
+<ParamField path="encoding.schema" type="string">
+Path to a schema file required by `avro` and `parquet` formats.  
+Can point to a local `.avsc` (Avro) or `.json` (Arrow/Parquet) schema.
+</ParamField>
+
+<ParamField path="compression" type="string | object">
+Configures compression for the encoded data.  
+Defaults to `zstd` with level `3`.
+
+**Options**
+- `none` — no compression  
+- `gzip` — standard Gzip (`.gz` extension, level 6 default)  
+- `zstd` — Zstandard (`.zst` extension, level 3 default)  
+- `snappy` — Snappy block compression (Avro-only)  
+- `deflate` — Deflate stream compression (Avro-only)
+
+**Examples**
+
+```yaml
+compression:
+  type: gzip
+  level: 6
+````
+
+```yaml
+compression:
+  type: zstd
+  level: 3
+```
+
+**Notes**
+
+* For **Avro** and **Parquet**, compression applies to **data blocks inside the file**, not the file as a whole.
+* Tangent automatically appends compression extensions when applicable (e.g. `.gz`, `.zst`).
+
+</ParamField>
+
+---
+
+## Examples
+
+### NDJSON (default)
+
+```yaml tangent.yaml icon=upload
+encoding:
+  type: ndjson
+  compression:
+    type: zstd
+    level: 3
+```
+
+### Parquet with Arrow schema
+
+```yaml tangent.yaml icon=upload
+encoding:
+  type: parquet
+  schema: ./schemas/arrow_schema.json
+  compression:
+    type: gzip
+```
+
+### Avro with explicit schema
+
+```yaml tangent.yaml icon=upload
+encoding:
+  type: avro
+  schema: ./schemas/events.avsc
+  compression:
+    type: deflate
+```
+
+---
+
+## Defaults Summary
+
+| Setting             | Default                 | Description               |
+| ------------------- | ----------------------- | ------------------------- |
+| `encoding.type`     | `ndjson`                | Newline-delimited JSON    |
+| `encoding.schema`   | —                       | Required for Avro/Parquet |
+| `compression.type`  | `zstd`                  | Data compression method   |
+| `compression.level` | `3` (zstd) / `6` (gzip) | Compression strength      |
+
+---
+
+## See also
+
+* [S3 Sink](/sinks/s3)
+* [File Sink](/sinks/file)
+* [Decoding](/sources/common/decoding)

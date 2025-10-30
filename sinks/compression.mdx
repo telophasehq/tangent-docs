@@ -1,0 +1,97 @@
+---
+title: "Compression"
+description: "Control how Tangent compresses data before writing to sinks."
+---
+
+The `compression` block defines **how Tangent compresses serialized records** before they’re written to disk or uploaded to S3.  
+Compression can be configured globally under `encoding`, or inline within a specific sink.
+
+---
+
+<ParamField path="compression.type" type="string" required>
+Specifies which compression algorithm to use.
+
+**Options**
+- `none` — no compression  
+- `gzip` — standard Gzip compression  
+- `zstd` — modern Zstandard compression (fast, high ratio)  
+- `snappy` — Snappy block compression (Avro-only)  
+- `deflate` — Deflate stream compression (Avro-only)
+</ParamField>
+
+<ParamField path="compression.level" type="int">
+Compression level (optional).  
+Defaults vary by algorithm:
+
+| Algorithm | Default | Range | Notes |
+|------------|----------|--------|--------|
+| `gzip` | `6` | `0–9` | Higher = smaller output, slower |
+| `zstd` | `3` | `1–22` | Higher = smaller output, slower |
+| `snappy` | — | — | Fixed speed/ratio |
+| `deflate` | — | — | Typically used for Avro data |
+</ParamField>
+
+---
+
+## Behavior
+
+- For **NDJSON** and **JSON**, Tangent compresses the entire file object.  
+- For **Avro** and **Parquet**, compression applies to **data blocks** inside the file. The file itself is not additionally wrapped.
+- Tangent automatically appends appropriate file extensions:
+  - `.gz` for Gzip
+  - `.zst` for Zstd
+
+---
+
+## Examples
+
+### Default (Zstandard level 3)
+
+```yaml tangent.yaml icon=upload
+compression:
+  type: zstd
+  level: 3
+````
+
+### Gzip with level 9
+
+```yaml tangent.yaml icon=upload
+compression:
+  type: gzip
+  level: 9
+```
+
+### No compression
+
+```yaml tangent.yaml icon=upload
+compression:
+  type: none
+```
+
+---
+
+## Recommended Use
+
+| Scenario                      | Recommended Compression     |
+| ----------------------------- | --------------------------- |
+| High-throughput pipelines     | `zstd` (fast and efficient) |
+| Archival or long-term storage | `gzip`                      |
+| Avro or Parquet encoding      | `zstd` or `snappy`          |
+| Local testing                 | `none`                      |
+
+---
+
+## Defaults Summary
+
+| Field               | Default | Description                        |
+| ------------------- | ------- | ---------------------------------- |
+| `compression.type`  | `zstd`  | Modern default for speed and ratio |
+| `compression.level` | `3`     | Balanced performance               |
+
+---
+
+## See also
+
+* [Encoding](/sinks/common/encoding)
+* [S3 Sink](/sinks/s3)
+* [File Sink](/sinks/file)

@@ -1,48 +1,92 @@
 ---
 title: "S3 Sink"
-description: "Write output to an S3 bucket"
+description: "Write processed records to an Amazon S3 bucket."
+---
+
+The **S3 sink** uploads objects to S3 with durability via a local **write-ahead log (WAL)**.  
+Encoding, compression, object sizing, and concurrency are configured via common sink options.
+
 ---
 
 <ParamField path="type" type="string" required>
-This should be set to `s3`
+Must be set to `s3`.
 </ParamField>
+
 <ParamField path="bucket_name" type="string" required>
-S3 bucket name (no s3:// url)
+Name of the destination S3 bucket (do **not** prefix with `s3://`).
 </ParamField>
-<ParamField path="region" type="string" required>
-S3 bucket region
+
+<ParamField path="region" type="string">
+AWS region for the bucket (optional).  
+If omitted, the AWS SDK’s default resolution is used (env vars, instance metadata, etc.).
 </ParamField>
+
 <ParamField path="wal_path" type="string">
-Path for write-ahead logs. Default `/tmp/wal`
+Filesystem path for the sink’s write-ahead log (WAL).  
+Defaults to `/tmp/wal`.
 </ParamField>
+
 <ParamField path="max_file_age_seconds" type="int">
-Maximum time (in seconds) before WAL are flushed
+Maximum age (in seconds) before a WAL file is rotated and flushed to S3.  
+Defaults to `60`.
 </ParamField>
-<ParamField path="encoding" type="string">
-Options: `ndjson`, `json`, `avro`, `parquet`
-
-Default: `ndjson`
-</ParamField>
-<ParamField path="compression" type="string">
-Options: `gzip`, `zstd`, `snappy` (`avro` encoding only), `deflate` (`avro` encoding only)
-
-Default: `None`
-<br/>
-For `parquet` and `avro` this configures _data_ compression. The file is not compressed.
+<ParamField path="encoding" type="object">
+Controls how Tangent serializes records emitted by this source. See [Encoding](/sinks/encoding).
 </ParamField>
 
-Example:
+<ParamField path="compression" type="object">
+Controls how Tangent compresses payloads emitted by this source. See [Compression](/sinks/compression).
+</ParamField>
 
-```yaml tangent.yaml
+---
+
+## Example (NDJSON + Zstd)
+
+```yaml tangent.yaml icon=upload
 sinks:
   s3_staging:
     type: s3
     bucket_name: my-bucket
     region: us-west-2
-    encoding: parquet
-    compression: gzip
+    # common options
+    encoding: ndjson         # default
+    compression:             # default shown explicitly
+      type: zstd
+      level: 3
+    wal_path: /tmp/wal
+    max_file_age_seconds: 60
 ```
 
-## Durability Guarantees
-> **At‑least‑once delivery**
-> Tangent uses a write-ahead log for S3 uploads for durability on restarts.
+## Example (Parquet + Gzip, Arrow schema)
+
+```yaml tangent.yaml icon=upload
+sinks:
+  s3_parquet:
+    type: s3
+    bucket_name: analytics-data
+    region: us-east-1
+    encoding:
+      type: parquet
+      schema: ./schemas/arrow_schema.json
+    compression:
+      type: gzip
+      level: 6
+    wal_path: /var/lib/tangent/wal
+    max_file_age_seconds: 120
+```
+
+---
+
+## Durability & Delivery
+
+* **At-least-once delivery**: records are appended to a local **WAL** before upload.
+* On restart or failure, the WAL is replayed and any incomplete objects are retried.
+* Rotation is triggered by **size** (`object_max_bytes`) or **time** (`max_file_age_seconds`).
+
+---
+
+## See also
+
+* [`File` sink](/sinks/file) for local files
+* [`Blackhole` sink](/sinks/blackhole) for testing
+* [DAG configuration](/tangent-yaml#dag)
