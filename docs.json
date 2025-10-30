@@ -71,7 +71,39 @@
             ]
           }
         ]
-      }
+      },
+      {
+        "tab": "Github",
+        "icon": "github",
+        "href": "https://github.com/telophasehq/tangent/"
+      },
+      {
+      "tab": "Reference",
+      "groups": [
+        {
+          "group": "API Reference",
+          "pages": ["api/overview", "api/config", "api/cli"]
+        }
+      ]
+    },
+    {
+      "tab": "Blog",
+      "groups": [
+        {
+          "group": "Articles",
+          "pages": ["blog/getting-started", "blog/architecture"]
+        }
+      ]
+    },
+    {
+      "tab": "Feedback",
+      "groups": [
+        {
+          "group": "Community",
+          "pages": ["feedback/issues", "feedback/roadmap"]
+        }
+      ]
+    }
     ]
   },
   "logo": {
@@ -81,8 +113,12 @@
   "navbar": {
     "links": [
       {
-        "label": "Help",
+        "label": "Discord",
         "href": "https://discord.gg/yA8dFdHP"
+      },
+      {
+        "label": "Github",
+        "href": "https://github.com/telophasehq/tangent/"
       }
     ]
   },
