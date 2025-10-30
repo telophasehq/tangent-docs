@@ -4,7 +4,7 @@ description: "Ingest data from sockets, queues, files, or streaming systems."
 ---
 
 Sources define **where Tangent reads data from** — for example, a local Unix socket, Amazon SQS queue, file, or Kafka/MSK topic.  
-Each source reads raw bytes, applies a configured [`decoding`](/sources/common/decoding) policy, and emits structured records into Tangent’s pipeline.
+Each source reads raw bytes, applies a configured [`decoding`](/sources/decoding) policy, and emits structured records into Tangent’s pipeline.
 
 ---
 
@@ -30,7 +30,7 @@ One of: `socket`, `file`, `msk`, or `sqs`.
 
 <ParamField path="decoding" type="object">
 Defines how incoming bytes are parsed into structured records.  
-See [Decoding](/sources/common/decoding) for format and compression options.
+See [Decoding](/sources/decoding) for format and compression options.
 </ParamField>
 
 ---
@@ -61,6 +61,6 @@ sources:
 
 ## See also
 
-* [Decoding](/sources/common/decoding)
-* [Runtime Configuration](/tangent-yaml#runtime)
-* [DAG](/tangent-yaml#dag)
+* [Decoding](/sources/decoding)
+* [Runtime Configuration](/cli/tangent-yaml#runtime)
+* [DAG](/cli/tangent-yaml#dag)

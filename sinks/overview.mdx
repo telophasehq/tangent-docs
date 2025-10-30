@@ -27,12 +27,12 @@ One of: `s3`, `file`, or `blackhole`.
 
 <ParamField path="encoding" type="object">
 Controls how Tangent serializes records before writing.  
-See [Encoding](/sinks/common/encoding) for supported formats (`ndjson`, `json`, `avro`, `parquet`).
+See [Encoding](/sinks/encoding) for supported formats (`ndjson`, `json`, `avro`, `parquet`).
 </ParamField>
 
 <ParamField path="compression" type="object">
 Configures compression for sink objects.  
-See [Compression](/sinks/common/compression) for algorithm details and levels.
+See [Compression](/sinks/compression) for algorithm details and levels.
 </ParamField>
 
 ---
@@ -69,6 +69,6 @@ sinks:
 * [S3 Sink](/sinks/s3)
 * [File Sink](/sinks/file)
 * [Blackhole Sink](/sinks/blackhole)
-* [Encoding](/sinks/common/encoding)
-* [Compression](/sinks/common/compression)
-* [DAG](/tangent-yaml#dag)
+* [Encoding](/sinks/encoding)
+* [Compression](/sinks/compression)
+* [DAG](/cli/tangent-yaml#dag)
