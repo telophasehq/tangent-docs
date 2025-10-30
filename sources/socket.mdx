@@ -2,3 +2,28 @@
 title: "Socket Source"
 description: "Description of your new file."
 ---
+
+Stream newline‑delimited JSON (or raw bytes) into Tangent via sockets.
+
+**Config**
+
+- `type: socket`
+- `address` (e.g. `0.0.0.0:9000`)
+- `protocol` (`tcp` | `udp`)
+
+**Example**
+
+```yaml
+sources:
+  socket_in:
+    type: socket
+    address: "0.0.0.0:9000"
+    protocol: tcp
+    ndjson: true
+```
+
+Send data
+
+```bash
+tangent bench --config tangent.yaml --seconds 30 --payload tests/input.json
+```

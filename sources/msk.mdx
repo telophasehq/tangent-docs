@@ -1,4 +1,27 @@
 ---
 title: "MSK Source"
-description: "Description of your new file."
+description: "Ingest from Amazon MSK (Kafka)."
 ---
+
+**Config (typical)**
+
+- `type: msk`
+- `brokers` (list of `host:port`)
+- `topic` (string)
+- `group_id` (string)
+- `sasl` (optional)
+  - `mechanism`: `plain` | `scram-sha-512` | `aws_msk_iam`
+  - `username`, `password` (if applicable)
+- `tls` (optional)
+  - `ca_file`, `verify` (bool)
+
+**Example**
+
+```yaml
+sources:
+  kafka_in:
+    type: msk
+    brokers: ["b-1:9092","b-2:9092"]
+    topic: logs
+    group_id: tangent
+````

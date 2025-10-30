@@ -1,9 +1,23 @@
 ---
 title: "Welcome to Tangent"
-description: "Tangent is an all-in-one ETL and toolkit for shipping log data, built on WASM"
+description: "Tangent is a WebAssembly‑powered stream processor & toolkit, built on WASM"
 ---
 
 <Columns cols={2}>
+    <Card
+    title="CLI"
+    icon="terminal"
+    href="/cli/overview"
+  >
+    Create new plugins, test, compile, and start the runtime
+  </Card>
+  <Card
+    title="Configuration"
+    icon="settings"
+    href="/cli/tangent-yaml"
+  >
+    Configure Tangent's settings for the runtime, plugins, and tests
+  </Card>
   <Card
     title="WASM Plugins"
     icon="plug-zap"
@@ -17,22 +31,6 @@ description: "Tangent is an all-in-one ETL and toolkit for shipping log data, bu
     href="/cli/run"
   >
     Learn more about our Rust-based runtime and WASM plugins
-  </Card>
-    <Card
-    title="CLI"
-    icon="terminal"
-    href="/cli/overview"
-  >
-    Create new plugins, test, compile, and start the runtime
-  </Card>
-  <Card
-    title="Configuration"
-    icon="settings"
-    href="/cli/tangent-yaml"
-  >
-    Configure Tangent's settings for runtime, compiling plugins, and testing
-
-    
   </Card>
 </Columns>
 
@@ -53,6 +51,6 @@ description: "Tangent is an all-in-one ETL and toolkit for shipping log data, bu
     icon="code"
     href="/quickstart"
   >
-    See Tangent in action
+    See it in action in 5 minutes
   </Card>
 </Columns>

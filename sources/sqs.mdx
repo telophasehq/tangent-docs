@@ -1,4 +1,27 @@
 ---
 title: "SQS Source"
-description: "Description of your new file."
+description: "Ingest messages from AWS SQS."
 ---
+
+Consume messages from **Amazon SQS** and feed them into your plugin.
+
+**Config (typical)**
+
+- `type: sqs`
+- `queue_url` (string)
+- `region` (string)
+- `wait_time_seconds` (number, default: 10)
+- `max_messages` (1–10, default: 10)
+- `visibility_timeout_seconds` (number, optional)
+
+**Example**
+
+```yaml
+sources:
+  sqs_in:
+    type: sqs
+    queue_url: https://sqs.us-west-2.amazonaws.com/123456789012/my-queue
+    region: us-west-2
+    wait_time_seconds: 10
+    max_messages: 10
+````

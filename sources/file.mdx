@@ -1,4 +1,20 @@
 ---
 title: "File Source"
-description: "Description of your new file."
+description: "Read from files or directories."
 ---
+
+Tail or batch‑read files into Tangent.
+
+**Config**
+
+- `type: file`
+- `path` (string | glob)
+
+**Example**
+
+```yaml
+sources:
+  local_files:
+    type: file
+    path: ./data/*.ndjson
+```
