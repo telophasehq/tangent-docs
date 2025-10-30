@@ -93,6 +93,10 @@
       "dark":  "#050A16"
     }
   },
+  "appearance": {
+    "default": "dark",
+    "strict": false
+  },
   "contextual": {
     "options": [
       "copy",
