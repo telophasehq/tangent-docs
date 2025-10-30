@@ -1,0 +1,66 @@
+---
+title: "Sources"
+description: "Ingest data from sockets, queues, files, or streaming systems."
+---
+
+Sources define **where Tangent reads data from** — for example, a local Unix socket, Amazon SQS queue, file, or Kafka/MSK topic.  
+Each source reads raw bytes, applies a configured [`decoding`](/sources/common/decoding) policy, and emits structured records into Tangent’s pipeline.
+
+---
+
+## Source Types
+
+| Type | Description | Example |
+|------|--------------|----------|
+| [`socket`](/sources/socket) | Local Unix domain socket (fastest for local ingestion) | `/tmp/sidecar.sock` |
+| [`file`](/sources/file) | Read structured logs from local or mounted files | `/var/log/app/access.log` |
+| [`msk`](/sources/msk) | Consume from Amazon MSK (Kafka) topics | `b-1.example.com:9092` |
+| [`sqs`](/sources/sqs) | Poll messages from Amazon SQS queues | `https://sqs.us-east-1.amazonaws.com/...` |
+
+---
+
+## Common Configuration
+
+Every source supports a few shared parameters:
+
+<ParamField path="type" type="string" required>
+Selects the source type.  
+One of: `socket`, `file`, `msk`, or `sqs`.
+</ParamField>
+
+<ParamField path="decoding" type="object">
+Defines how incoming bytes are parsed into structured records.  
+See [Decoding](/sources/common/decoding) for format and compression options.
+</ParamField>
+
+---
+
+## Example (MSK Source)
+
+```yaml tangent.yaml icon=download
+sources:
+  kafka_in:
+    type: msk
+    bootstrap_servers: "b-1.example.com:9092,b-2.example.com:9092"
+    topic: logs
+    group_id: tangent-node
+    decoding:
+      format: ndjson
+      compression: auto
+````
+
+---
+
+## Behavior
+
+* Each source runs in its own async worker, managed by Tangent’s runtime.
+* Data is read continuously, batched in memory, and flushed based on runtime settings (`batch_size` / `batch_age`).
+* Decoding and optional re-encoding happen before the data enters the plugin or sink DAG.
+
+---
+
+## See also
+
+* [Decoding](/sources/common/decoding)
+* [Runtime Configuration](/tangent-yaml#runtime)
+* [DAG](/tangent-yaml#dag)

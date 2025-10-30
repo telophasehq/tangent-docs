@@ -1,0 +1,74 @@
+---
+title: "Sinks"
+description: "Write processed records to storage systems or discard them."
+---
+
+Sinks define **where Tangent writes data to** — for example, S3 buckets, local files, or testing targets like `blackhole`.  
+They are the **terminal nodes** of the DAG: after records are processed by plugins, they are serialized and written by sinks.
+
+---
+
+## Sink Types
+
+| Type | Description | Example |
+|------|--------------|----------|
+| [`s3`](/sinks/s3) | Write to Amazon S3 buckets with WAL durability | `my-bucket` |
+| [`file`](/sinks/file) | Write to local or mounted filesystem paths | `/var/lib/tangent/output.json` |
+| [`blackhole`](/sinks/blackhole) | Discard output (useful for testing) | — |
+
+---
+
+## Common Configuration
+
+<ParamField path="type" type="string" required>
+Selects the sink type.  
+One of: `s3`, `file`, or `blackhole`.
+</ParamField>
+
+<ParamField path="encoding" type="object">
+Controls how Tangent serializes records before writing.  
+See [Encoding](/sinks/common/encoding) for supported formats (`ndjson`, `json`, `avro`, `parquet`).
+</ParamField>
+
+<ParamField path="compression" type="object">
+Configures compression for sink objects.  
+See [Compression](/sinks/common/compression) for algorithm details and levels.
+</ParamField>
+
+---
+
+## Example (S3 Sink)
+
+```yaml tangent.yaml icon=upload
+sinks:
+  s3_main:
+    type: s3
+    bucket_name: my-bucket
+    region: us-west-2
+    encoding:
+      type: parquet
+      schema: ./schemas/arrow_schema.json
+    compression:
+      type: gzip
+      level: 6
+````
+
+---
+
+## Behavior
+
+* Each sink manages its own WAL and upload queue.
+* Data rotation happens automatically based on time or size thresholds.
+* Tangent guarantees **at-least-once delivery** — WALs ensure safe recovery on restart.
+* Encoding and compression are handled transparently before upload.
+
+---
+
+## See also
+
+* [S3 Sink](/sinks/s3)
+* [File Sink](/sinks/file)
+* [Blackhole Sink](/sinks/blackhole)
+* [Encoding](/sinks/common/encoding)
+* [Compression](/sinks/common/compression)
+* [DAG](/tangent-yaml#dag)
