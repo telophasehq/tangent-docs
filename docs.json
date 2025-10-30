@@ -33,7 +33,7 @@
               "cli/plugin/test",
               "cli/run",
               "cli/bench",
-              "cli/tangent-yaml.mdx"
+              "cli/tangent-yaml"
             ]
           },
           {
