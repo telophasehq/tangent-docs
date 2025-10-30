@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Tangent",
   "colors": {
-    "primary": "#16A34A",
-    "light":   "#22C55E",
-    "dark":    "#15803D"
+  "primary": "#6D28D9",
+  "light":   "#8B5CF6",
+  "dark":    "#4C1D95"
   },
   "favicon": "/favicon.png",
   "icons": {
@@ -89,8 +89,8 @@
   "background": {
     "decoration": "grid",
     "color": {
-      "light": "#F6FFF9",
-      "dark":  "#0B1B12"
+      "light": "#F6FAFF",
+      "dark":  "#050A16"
     }
   },
   "contextual": {
