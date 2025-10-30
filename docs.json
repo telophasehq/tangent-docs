@@ -18,6 +18,7 @@
         "groups": [
           {
             "group": "Getting started",
+            "icon": "rocket",
             "pages": [
               "index",
               "quickstart",
@@ -39,6 +40,7 @@
           },
           {
             "group": "Plugins",
+            "icon": "plug-zap",
             "pages": [
               "plugins/authoring",
               "plugins/community"
@@ -46,6 +48,7 @@
           },
           {
             "group": "Sinks",
+            "icon": "upload-cloud",
             "pages": [
               "sinks/overview",
               "sinks/s3",
@@ -57,6 +60,7 @@
           },
           {
             "group": "Sources",
+            "icon": "download-cloud",
             "pages": [
               "sources/overview",
               "sources/sqs",
@@ -83,7 +87,7 @@
     ]
   },
   "background": {
-    "decoration": "gradient",
+    "decoration": "grid",
     "color": {
       "light": "#F6FFF9",
       "dark":  "#0B1B12"
