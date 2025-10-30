@@ -27,19 +27,21 @@
           {
             "group": "CLI",
             "pages": [
-              "cli/compile-wasm",
+              "cli/overview",
+              "cli/plugin/scaffold",
+              "cli/plugin/compile",
+              "cli/plugin/test",
               "cli/run",
               "cli/bench",
-              "cli/test",
-              "cli/scaffold",
-              "tangent.yaml"
+              "cli/tangent-yaml.mdx"
             ]
           },
           {
             "group": "WASM Plugins",
             "pages": [
               "plugins/authoring",
-              "plugins/examples"
+              "plugins/examples",
+              "plugins/community"
             ]
           },
           {
