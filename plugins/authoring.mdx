@@ -13,34 +13,83 @@ The interface has three methods to implement
 
 Name and version of your plugin
 
-**Python**
+<Tabs>
+  <Tab title="Go">
+    <CodeGroup>
 
-```python
-def metadata(self) -> mapper.Meta:
-  return mapper.Meta(name="python-example", version="0.1.0")
-```
+    ```go main.go
+    mapper.Exports.Metadata = func() mapper.Meta {
+        return mapper.Meta{
+            Name:    "golang-example",
+            Version: "0.1.0",
+        }
+    }
+    ```
+
+    </CodeGroup>
+  </Tab>
+  <Tab title="Python">
+    <CodeGroup>
+
+    ```python mapper.py
+    def metadata(self) -> mapper.Meta:
+      return mapper.Meta(name="python-example", version="0.1.0")
+    ```
+
+    </CodeGroup>
+  </Tab>
+</Tabs>
 
 ### Probe
 
-Used to tell the runtime which logs to send to your plugin.
+Used to tell the host which logs to send to the mapper
 
-**Python**
+<Tabs>
+  <Tab title="Go">
+    <CodeGroup>
 
-```python
-def probe(self) -> List[mapper.Selector]:
-  # Match logs where source.name == "myservice"
-  return [
-      mapper.Selector(
-          any=[],
-          all=[
-              mapper.Pred_Eq(
-                  ("source.name", log.Scalar_Str("myservice"))
-              )
-          ],
-          none=[],
-      )
-  ]
-```
+    ```go main.go
+    mapper.Exports.Probe = func() cm.List[mapper.Selector] {
+      return cm.ToList([]mapper.Selector{
+          {
+              Any: cm.ToList([]mapper.Pred{}),
+              All: cm.ToList([]mapper.Pred{
+                  mapper.PredEq(
+                      cm.Tuple[string, mapper.Scalar]{
+                          F0: "source.name",
+                          F1: log.ScalarStr("myservice"),
+                      },
+                  )}),
+              None: cm.ToList([]mapper.Pred{}),
+          },
+      })
+    }
+    ```
+
+    </CodeGroup>
+  </Tab>
+  <Tab title="Python">
+    <CodeGroup>
+
+    ```python mapper.py
+    def probe(self) -> List[mapper.Selector]:
+      # Match logs where source.name == "myservice"
+      return [
+          mapper.Selector(
+              any=[],
+              all=[
+                  mapper.Pred_Eq(
+                      ("source.name", log.Scalar_Str("myservice"))
+                  )
+              ],
+              none=[],
+          )
+      ]
+    ```
+
+    </CodeGroup>
+  </Tab>
+</Tabs>
 
 Will send all logs with
 
@@ -60,86 +109,95 @@ This is the business logic of your plugin. It takes in a `log.Logview`, which al
 
 Performance note: Always prefer to fetch scalar values from the log. Scalars do not create heap allocations. Fetching lists and maps allocate on the heap, which hurts performance.
 
-**Go**
+<Tabs>
+  <Tab title="Go">
+    <CodeGroup>
 
-```go
-// scaffolded project provides imports and types
-mapper.Exports.ProcessLogs = func(input cm.List[log.Logview]) (res cm.Result[cm.List[uint8], cm.List[uint8], string]) {
-    buf := bufPool.Get().(*bytes.Buffer)
-    buf.Reset()
-    
-    // take an owned copy of the input.
-    var items []log.Logview
-    items = append(items, input.Slice()...)
-    for idx := range items {
-        var out ExampleOutput
-    
-        lv := log.Logview(items[idx])
-    
-        // Get String
-        msg := tangenthelpers.GetString(lv, "msg")
-        if msg != nil {
-            out.Msg = *msg
-        }
-      }
-      res.SetOK(cm.ToList(buf.Bytes()))
-      bufPool.Put(buf)
-      return
-}
-```
-
-**Python**
-
-```python
-def process_logs(self, logs: List[log.Logview]) -> bytes:
-  buf = bytearray()
-  for lv in logs:
-      with lv:
-          out = {
-              "message": "",
-              "level": "",
-              "seen": 0,
-              "duration": 0.0,
-              "service": "",
-              "tags": None,
+    ```go main.go
+    // scaffolded project provides imports and types
+    mapper.Exports.ProcessLogs = func(input cm.List[log.Logview]) (res cm.Result[cm.List[uint8], cm.List[uint8], string]) {
+        buf := bufPool.Get().(*bytes.Buffer)
+        buf.Reset()
+        
+        // take an owned copy of the input.
+        var items []log.Logview
+        items = append(items, input.Slice()...)
+        for idx := range items {
+            var out ExampleOutput
+        
+            lv := log.Logview(items[idx])
+        
+            // Get String
+            msg := tangenthelpers.GetString(lv, "msg")
+            if msg != nil {
+                out.Msg = *msg
+            }
           }
+          res.SetOK(cm.ToList(buf.Bytes()))
+          bufPool.Put(buf)
+          return
+    }
+    ```
 
-          # get string
-          s = lv.get("msg")
-          if s is not None and hasattr(s, "value"):
-              out["message"] = s.value
+    </CodeGroup>
+  </Tab>
+  <Tab title="Python">
+    <CodeGroup>
 
-          # get dot path
-          s = lv.get("msg.level")
-          if s is not None and hasattr(s, "value"):
-              out["level"] = s.value
+    ```python mapper.py
+    def process_logs(self, logs: List[log.Logview]) -> bytes:
+      buf = bytearray()
+      for lv in logs:
+          with lv:
+              out = {
+                  "message": "",
+                  "level": "",
+                  "seen": 0,
+                  "duration": 0.0,
+                  "service": "",
+                  "tags": None,
+              }
+    
+              # get string
+              s = lv.get("msg")
+              if s is not None and hasattr(s, "value"):
+                  out["message"] = s.value
+    
+              # get dot path
+              s = lv.get("msg.level")
+              if s is not None and hasattr(s, "value"):
+                  out["level"] = s.value
+    
+              # get int
+              s = lv.get("seen")
+              if s is not None and hasattr(s, "value"):
+                  out["seen"] = s.value
+    
+              # get float
+              s = lv.get("duration")
+              if s is not None and hasattr(s, "value"):
+                  out["duration"] = s.value
+    
+              # get value from nested json
+              s = lv.get("source.name")
+              if s is not None and hasattr(s, "value"):
+                  out["service"] = s.value
+    
+              # get string list
+              lst = lv.get_list("tags")
+              if lst is not None:
+                  tags: List[str] = []
+                  for item in lst:
+                      tags.append(item.value)
+                  out["tags"] = tags
+    
+              buf.extend(json.dumps(out).encode('utf-8') + b"\n")
+      return bytes(buf)
+    ```
 
-          # get int
-          s = lv.get("seen")
-          if s is not None and hasattr(s, "value"):
-              out["seen"] = s.value
-
-          # get float
-          s = lv.get("duration")
-          if s is not None and hasattr(s, "value"):
-              out["duration"] = s.value
-
-          # get value from nested json
-          s = lv.get("source.name")
-          if s is not None and hasattr(s, "value"):
-              out["service"] = s.value
-
-          # get string list
-          lst = lv.get_list("tags")
-          if lst is not None:
-              tags: List[str] = []
-              for item in lst:
-                  tags.append(item.value)
-              out["tags"] = tags
-
-          buf.extend(json.dumps(out).encode('utf-8') + b"\n")
-  return bytes(buf)
-```
+    </CodeGroup>
+  </Tab>
+</Tabs>
 
 ### Local dev loop
 
