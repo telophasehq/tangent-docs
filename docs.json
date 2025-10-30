@@ -4,8 +4,8 @@
   "name": "Tangent",
   "colors": {
     "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "light":   "#22C55E",
+    "dark":    "#15803D"
   },
   "favicon": "/favicon.png",
   "icons": {
@@ -26,6 +26,7 @@
           },
           {
             "group": "CLI",
+            "icon": "square-terminal",
             "pages": [
               "cli/overview",
               "cli/run",
@@ -80,6 +81,13 @@
         "href": "https://discord.gg/yA8dFdHP"
       }
     ]
+  },
+  "background": {
+    "decoration": "gradient",
+    "color": {
+      "light": "#F6FFF9",
+      "dark":  "#0B1B12"
+    }
   },
   "contextual": {
     "options": [

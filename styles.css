@@ -1,0 +1,12 @@
+:root {
+  --accent-color: #FEBBD0;
+  --bg-gradient: linear-gradient(135deg, #FFF7FA, #FFE9F3);
+}
+
+body {
+  background: var(--bg-gradient);
+}
+
+a, .doc-header {
+  color: var(--accent-color);
+}
