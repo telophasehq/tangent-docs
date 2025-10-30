@@ -1,0 +1,123 @@
+---
+title: "Decoding"
+description: "How Tangent decodes incoming bytes from sources before handing them to your plugins."
+---
+
+The `decoding` block tells Tangent **how to interpret message bytes** coming from a source (Kafka/MSK, sockets, files, SQS, etc.).  
+It has two knobs:
+
+- `format` — how to parse the bytes (JSON/NDJSON/MsgPack/Text)
+- `compression` — whether the bytes are compressed (auto-detect by default)
+
+> You can set `decoding` on any source (e.g., `msk`, `socket`, `file`, `sqs`).
+
+---
+
+## Schema
+
+<ParamField path="decoding.format" type="string" required>
+Parsing format for the message payload.
+
+**Options**
+- `ndjson` — Each message is a JSON object per line (newline-delimited JSON).
+- `json` — Each message is one JSON object (no newlines required).
+- `json-array` — Each message is a JSON array; Tangent emits each element as an individual record.
+- `msgpack` — MessagePack-encoded payloads.
+- `text` — Treat the payload as plain text; Tangent wraps it in a minimal JSON object.
+
+**Notes**
+- Use `ndjson` for most streaming log pipelines.
+- Use `json-array` if a single message contains many records (batch).
+</ParamField>
+
+<ParamField path="decoding.compression" type="string">
+Controls decompression. Defaults to `auto`.
+
+**Options**
+- `auto` — Detect from metadata, filename, or magic bytes.
+- `none` — Do not decompress.
+- `gzip` — Force gzip.
+- `zstd` — Force Zstandard.
+
+**Auto-detection details**
+1. Checks **metadata** (e.g., `Content-Encoding`) for `gzip`, `zstd`, `identity/none`.
+2. Falls back to **filename** suffixes: `.gz` / `.gzip` → gzip, `.zst` / `.zstd` → zstd.
+3. Finally, inspects **magic bytes**:
+   - Gzip: `1F 8B`
+   - Zstd: `28 B5 2F FD`
+
+If none match, Tangent assumes `none`.
+</ParamField>
+---
+## Examples
+
+### MSK (Kafka)
+```yaml tangent.yaml icon=download
+sources:
+  kafka_in:
+    type: msk
+    bootstrap_servers: "b-1.example.com:9092,b-2.example.com:9092"
+    topic: logs
+    group_id: tangent-node
+    decoding:
+      format: ndjson
+      compression: auto
+````
+
+### Socket (Unix domain socket)
+
+```yaml tangent.yaml icon=plug
+sources:
+  socket_main:
+    type: socket
+    socket_path: "/tmp/sidecar.sock"
+    decoding:
+      format: json
+      compression: none
+```
+
+### File (compressed batch JSON)
+
+```yaml tangent.yaml icon=file
+sources:
+  access_logs:
+    type: file
+    path: /var/log/app/access.json.zst
+    decoding:
+      format: json-array
+      compression: auto   # will detect zstd from filename/magic bytes
+```
+
+### SQS (MessagePack)
+
+```yaml tangent.yaml icon=cloud
+sources:
+  app_queue:
+    type: sqs
+    queue_url: https://sqs.us-east-1.amazonaws.com/123/queue
+    decoding:
+      format: msgpack
+      compression: none
+```
+---
+## Behavior & Tips
+
+* **`ndjson` vs `json`**
+  If your producer writes one JSON object per line, use `ndjson`. If each message is a single JSON object (no newline contract), use `json`.
+
+* **Batch ingestion with `json-array`**
+  When a payload is a JSON array, Tangent emits **one record per element**. Great for files or batched Kafka messages.
+
+* **Compression `auto` is production-friendly**
+  Works reliably across mixed inputs: headers, filenames, or magic bytes will be used to detect gzip/zstd.
+
+* **Text inputs**
+  With `text`, Tangent will wrap lines as a minimal JSON event (e.g., `{ "message": "..." }`) so your plugins receive consistent JSON.
+
+---
+
+## See also
+
+* Sources: [MSK](/sources/msk), [Socket](/sources/socket), [File](/sources/file), [SQS](/sources/sqs)
+* Pipeline wiring: [`dag`](/tangent-yaml#dag)
+

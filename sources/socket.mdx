@@ -1,29 +1,55 @@
 ---
 title: "Socket Source"
-description: "Description of your new file."
+description: "Ingest logs from a local Unix domain socket."
 ---
 
-Stream newline‑delimited JSON (or raw bytes) into Tangent via sockets.
+The **Socket source** allows Tangent to consume logs from a local Unix domain socket (UDS).  
+This is the simplest way to connect local producers (e.g. agents, sidecars, or log forwarders) directly to Tangent.
 
-**Config**
+---
 
-- `type: socket`
-- `address` (e.g. `0.0.0.0:9000`)
-- `protocol` (`tcp` | `udp`)
+<ParamField path="socket_path" type="string" required>
+Path to the Unix domain socket used for ingestion.  
+Defaults to `/tmp/sidecar.sock`.
+</ParamField>
 
-**Example**
+---
 
-```yaml
+## Example
+
+```yaml tangent.yaml icon=plug
 sources:
-  socket_in:
+  socket_main:
     type: socket
-    address: "0.0.0.0:9000"
-    protocol: tcp
-    ndjson: true
-```
+    socket_path: "/tmp/sidecar.sock"
+    decoding:
+      format: ndjson
+      compression: auto
+````
 
-Send data
+---
 
-```bash
-tangent bench --config tangent.yaml --seconds 30 --payload tests/input.json
-```
+## Behavior
+
+* Tangent listens on the provided socket path and accepts connections from any local producer process.
+* Producers can write NDJSON or JSON payloads to the socket — Tangent decodes them according to the configured `decoding` section.
+* When the source closes, Tangent flushes any buffered messages before shutdown.
+
+---
+
+## Common Use Cases
+
+| Use Case                 | Example                                                               |
+| ------------------------ | --------------------------------------------------------------------- |
+| Local log forwarder      | An app writes logs to `/tmp/sidecar.sock` instead of stdout           |
+| Sidecar integration      | Send structured logs from a container to Tangent                      |
+| Testing and benchmarking | Use the Tangent CLI to `bench` or `run` against a local socket source |
+
+---
+
+## See also
+
+* [Decoding](/sources/common/decoding)
+* [MSK Source](/sources/msk)
+* [SQS Source](/sources/sqs)
+* [DAG configuration](/tangent-yaml#dag)

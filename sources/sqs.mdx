@@ -1,27 +1,76 @@
 ---
 title: "SQS Source"
-description: "Ingest messages from AWS SQS."
+description: "Ingest logs and messages from Amazon SQS queues."
 ---
 
-Consume messages from **Amazon SQS** and feed them into your plugin.
+The **SQS source** allows Tangent to consume messages directly from an Amazon Simple Queue Service (SQS) queue.  
+This is useful for event-driven pipelines, asynchronous log forwarding, or integrating with other AWS services that publish to SQS.
 
-**Config (typical)**
+---
 
-- `type: sqs`
-- `queue_url` (string)
-- `region` (string)
-- `wait_time_seconds` (number, default: 10)
-- `max_messages` (1–10, default: 10)
-- `visibility_timeout_seconds` (number, optional)
+<ParamField path="queue_url" type="string" required>
+The full URL of the SQS queue to poll.  
+Example: `https://sqs.us-east-1.amazonaws.com/123456789012/my-queue`
+</ParamField>
 
-**Example**
+<ParamField path="wait_time_seconds" type="int">
+Long polling duration in seconds.  
+Controls how long Tangent waits for messages before returning an empty response.  
+Defaults to `20`.
+</ParamField>
 
-```yaml
+<ParamField path="visibility_timeout" type="int">
+The duration (in seconds) that a message remains invisible to other consumers after Tangent retrieves it.  
+Defaults to `60`.
+</ParamField>
+
+<ParamField path="decoding" type="object">
+Controls how Tangent parses message payloads after retrieval.  
+See [Decoding](/sources/common/decoding) for supported formats (`json`, `ndjson`, `msgpack`, etc.).
+</ParamField>
+
+---
+
+## Example
+
+```yaml tangent.yaml icon=cloud
 sources:
-  sqs_in:
+  sqs_logs:
     type: sqs
-    queue_url: https://sqs.us-west-2.amazonaws.com/123456789012/my-queue
-    region: us-west-2
-    wait_time_seconds: 10
-    max_messages: 10
+    queue_url: "https://sqs.us-east-1.amazonaws.com/123456789012/app-logs"
+    wait_time_seconds: 20
+    visibility_timeout: 60
+    decoding:
+      format: json
+      compression: auto
 ````
+
+---
+
+## Behavior
+
+* Tangent uses the AWS SDK to long-poll the specified queue for messages.
+* When a message arrives:
+
+  * The payload is decoded according to the `decoding` configuration.
+  * Each decoded record is passed into the pipeline.
+* Messages are automatically deleted after successful processing.
+* Visibility timeouts prevent duplicate processing in concurrent consumers.
+
+---
+
+## Best Practices
+
+* **Keep `wait_time_seconds` high (e.g., 20s)** to reduce API calls and costs.
+* **Ensure the IAM role or credentials** used by Tangent have `sqs:ReceiveMessage` and `sqs:DeleteMessage` permissions.
+* **Tune `visibility_timeout`** to be slightly longer than your typical plugin or sink processing time to avoid message re-delivery.
+* Use `decoding.format: json` or `ndjson` for structured logs, or `text` for plain message bodies.
+
+---
+
+## See also
+
+* [Decoding](/sources/common/decoding)
+* [Socket Source](/sources/socket)
+* [MSK Source](/sources/msk)
+* [DAG configuration](/tangent-yaml#dag)

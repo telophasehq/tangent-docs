@@ -5,12 +5,23 @@ description: "Read from files or directories."
 
 Tail or batch‑read files into Tangent.
 
-**Config**
+---
 
-- `type: file`
-- `path` (string | glob)
+<ParamField path="type" type="string" required>
+This should be set to `file`
+</ParamField>
 
-**Example**
+<ParamField path="path" type="string" required>
+Filepath to source data
+</ParamField>
+<ParamField path="decoding" type="string">
+Specifies how incoming payloads are decoded before being sent to your plugin.  
+See [Decoding Options](/sources/decoding) for details.
+</ParamField>
+
+---
+
+## Example
 
 ```yaml
 sources:

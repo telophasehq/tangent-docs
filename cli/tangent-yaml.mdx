@@ -4,53 +4,51 @@ description: "Configure Tangent using tangent.yaml"
 ---
 
 ## Runtime
-
-### `plugins_path`
-Required
-
-Path to your compiled plugins. default: `plugins/`
+<ParamField path="plugins_path" type="string">
+  Path to your compiled plugins. default: `plugins/`
 
 ```yaml tangent.yaml icon=settings
 runtime:
   path: plugins/
 ```
+</ParamField>
 
-### `batch_size`
-
-Tangent buffers logs in memory before flushing to your WASM plugin. Logs are flushed when either `batch_size` or `batch_age` is reached.
-
-`batch_size` configures the maximum size of logs to buffer before flushing, in KB (default: 256).
+<ParamField path="batch_size" type="int">
+Maximum size (in KB) of logs buffered in memory before being flushed to your WASM plugin.  
+Defaults to `256 KB`.
 
 ```yaml tangent.yaml icon=settings
 runtime:
   batch_size: 1024
 ```
+</ParamField>
 
-### `batch_age`
 
-Tangent buffers logs in memory before flushing to your WASM plugin. Logs are flushed when either `batch_size` or `batch_age` is reached.
+<ParamField path="batch_age" type="int">
+Maximum time (in milliseconds) logs will be buffered before being flushed to your WASM plugin.  
+Defaults to `5 ms`.
 
-`batch_age` configures the maximum time logs will be buffered before flushing, in milliseconds (default: 5)
 
 ```yaml tangent.yaml icon=settings
 runtime:
   batch_age: 5
 ```
+</ParamField>
 
-### `workers`
-
+<ParamField path="workers" type="int">
 Number of workers threads to spawn (default: number of CPUs)
 
 ```yaml tangent.yaml icon=settings
 runtime:
   workers: 16
 ```
+</ParamField>
 
 ## `plugins`
 
-### `module_type`
-Required
+Each plugin is defined under a user-chosen key (e.g. golang) that you can reference in the DAG.
 
+<ParamField path="module_type" type="string" required>
 The language used by your WASM plugin. This is used by `compile-wasm` command.
 
 Options: `go`, `py`
@@ -60,10 +58,10 @@ plugins:
   my_plugin:
     module_type: go
 ```
+</ParamField>
 
-### `path`
-Required
 
+<ParamField path="path" type="string" required>
 Path to your plugin _entry point_. For Golang, this is `.`. For Python, its the name of a file e.g. `mapper.py`.
 
 ```yaml tangent.yaml icon=settings
@@ -71,9 +69,9 @@ plugins:
   my_plugin:
     path: mapper.py
 ```
+</ParamField>
 
-### `tests`
-
+<ParamField path="tests" type="map">
 Path to your plugin test `input` and `expected` output. 
 
 
@@ -84,17 +82,7 @@ plugins:
       - input: tests/input.json
         expected: tests/expected.json
 ```
-
-Example:
-```yaml tangent.yaml icon=settings
-plugins:
-  golang: # name of your plugin
-    module_type: go
-    path: .
-    tests:
-      - input: tests/input.json
-        expected: tests/expected.json
-```
+</ParamField>
 
 ## `sources`
 
@@ -127,9 +115,19 @@ sinks:
 ```
 
 ## `dag`
-Configures the 
 
-Example
+Defines the **dataflow graph** (Directed Acyclic Graph) that connects sources, plugins, and sinks in your pipeline.
+Each entry describes how data should flow **from one node to one or more downstream nodes**.
+
+Tangent executes your pipeline according to this graph — logs enter from a **source**, are processed by one or more **plugins**, and finally written to **sinks**.
+
+Each node has:
+
+* `kind`: the type of node — `source`, `plugin`, or `sink`
+* `name`: the name of the node defined elsewhere in your config (e.g. under `sources:`, `plugins:`, or `sinks:`)
+
+### Example
+
 ```yaml tangent.yaml icon=settings
 dag:
   - from:
@@ -146,6 +144,15 @@ dag:
       - kind: sink
         name: blackhole
 ```
+
+In this example:
+
+1. Logs flow **from** the `socket_main` source
+2. **Through** the `golang` plugin (which transforms or enriches them)
+3. **To** the `blackhole` sink (which receives the final output)
+
+You can chain multiple plugins or send data to multiple destinations by adding more `to:` entries.
+
 
 ## Full Example:
 

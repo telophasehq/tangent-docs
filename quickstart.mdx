@@ -7,15 +7,14 @@ description: "Build, run, and ship a WASM log processor in minutes."
 
 Create a WASM plugin, run the pipeline locally, then benchmark it.
 
-### 1) Install Tangent
-
+<Steps>
+  <Step title="Install Tangent">
 
 ```bash curl
 curl --proto '=https' --tlsv1.2 -LsSf https://github.com/Santiago-Labs/tangent/releases/download/latest/tangent-cli-installer.sh | sh
 ```
-    
-
-### 2) Scaffold a plugin
+  </Step>
+  <Step title="Scaffold a plugin">
 
 ```bash
 # Create a new plugin in Go or Python
@@ -24,13 +23,13 @@ tangent plugin scaffold --lang go --name hello-logs
 tangent plugin scaffold --lang py --name hello-logs
 ```
 Scaffold creates a minimal working plugin with tests.
-
-### 3) Compile
+  </Step>
+  <Step title="Compile">
 ```bash
 tangent plugin compile --config tangent.yaml --wit .tangent/wit
 ```
-
-### 4) Run the pipeline
+  </Step>
+  <Step title="Run the pipeline">
 ```bash
 tangent run --config tangent.yaml
 ```
@@ -39,11 +38,13 @@ Your pipeline is now running. You can send data to the socket with
 ```bash
 tangent bench --config tangent.yaml --seconds 30 --payload tests/input.json
 ```
-
-### 5) Benchmark
+  </Step>
+  <Step title="Benchmark">
 ```bash
 tangent bench --config tangent.yaml --seconds 30 --payload tests/input.json
 ```
+  </Step>
+</Steps>
 
 ## Next steps
 Author plugins: [Authoring a WASM Plugin](/plugins/authoring)

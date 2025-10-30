@@ -1,27 +1,100 @@
 ---
 title: "MSK Source"
-description: "Ingest from Amazon MSK (Kafka)."
+description: "Ingest logs from Amazon MSK (Managed Streaming for Apache Kafka)."
 ---
 
-**Config (typical)**
+The **MSK source** allows Tangent to consume logs directly from an Amazon MSK (Kafka) cluster.  
+It supports plaintext and SCRAM-SHA authentication, as well as optional TLS configuration.
 
-- `type: msk`
-- `brokers` (list of `host:port`)
-- `topic` (string)
-- `group_id` (string)
-- `sasl` (optional)
-  - `mechanism`: `plain` | `scram-sha-512` | `aws_msk_iam`
-  - `username`, `password` (if applicable)
-- `tls` (optional)
-  - `ca_file`, `verify` (bool)
+---
 
-**Example**
+<ParamField path="bootstrap_servers" type="string" required>
+A comma-separated list of Kafka broker addresses in the form `host:port`.  
+Example:`"b-1.example.com:9092,b-2.example.com:9092"`
+</ParamField>
 
-```yaml
+<ParamField path="topic" type="string" required>
+Kafka topic to subscribe to.
+</ParamField>
+
+<ParamField path="group_id" type="string">
+Consumer group ID for this Tangent node.  
+Defaults to `tangent-node`.
+</ParamField>
+
+<ParamField path="security_protocol" type="string">
+Kafka security protocol to use.  
+Defaults to `PLAINTEXT`.  
+Typical values: `PLAINTEXT`, `SASL_SSL`, `SSL`.
+</ParamField>
+
+<ParamField path="ssl_ca_location" type="string">
+Path to CA certificate file if using SSL/TLS.
+</ParamField>
+
+<ParamField path="ssl_certificate_location" type="string">
+Path to the client certificate file if required by your MSK cluster.
+</ParamField>
+
+<ParamField path="ssl_key_location" type="string">
+Path to the client private key file if required by your MSK cluster.
+</ParamField>
+<ParamField path="decoding" type="string">
+Specifies how incoming Kafka message payloads are decoded before being sent to your plugin.  
+See [Decoding Options](/sources/decoding) for details.
+</ParamField>
+
+---
+
+## `auth`
+
+Authentication settings for connecting to MSK.
+
+<ParamField path="auth.mode" type="string" required>
+Authentication mode.  
+Currently only `scram` is supported.
+</ParamField>
+
+<ParamField path="auth.sasl_mechanism" type="string">
+SASL mechanism to use for SCRAM authentication.  
+Defaults to `SCRAM-SHA-512`.
+</ParamField>
+
+<ParamField path="auth.username" type="string" required>
+Username for SASL authentication.
+</ParamField>
+
+<ParamField path="auth.password" type="string" required>
+Password for SASL authentication.  
+This is stored securely using `SecretString`.
+</ParamField>
+
+---
+
+## Example
+
+```yaml tangent.yaml icon=download
 sources:
   kafka_in:
     type: msk
-    brokers: ["b-1:9092","b-2:9092"]
+    bootstrap_servers: "b-1.example.com:9092,b-2.example.com:9092"
     topic: logs
-    group_id: tangent
+    group_id: tangent-node
+    security_protocol: SASL_SSL
+    ssl_ca_location: /etc/ssl/certs/ca.pem
+    auth:
+      mode: scram
+      sasl_mechanism: SCRAM-SHA-512
+      username: tangent
+      password: supersecret
+    decoding: json
 ````
+
+---
+
+### 🧠 Notes
+
+* Tangent uses Kafka’s standard consumer group semantics.
+* If `auth.mode` is set to `scram`, ensure the brokers support SASL/SCRAM.
+* TLS parameters are optional but recommended in production.
+* The `decoding` field determines how message bytes are parsed (e.g. `json`, `ndjson`, `raw`).

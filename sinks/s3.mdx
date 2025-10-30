@@ -3,16 +3,33 @@ title: "S3 Sink"
 description: "Write output to an S3 bucket"
 ---
 
-**Config**
-- `type: s3`
-- `bucket_name` (string)
-- `region` (string, optional)
-- `wal_path` (string, default: `/tmp/wal`)
-- `max_file_age_seconds` (number, default: 60)
-- `encoding` (ndjson|json|avro|parquet; default: ndjson)
-- `compression` (none|gzip|zstd; default: zstd level 3)
-- `object_max_bytes` (number; default: 134,217,728)
-- `in_flight_limit` (number; default: 16)
+<ParamField path="type" type="string" required>
+This should be set to `s3`
+</ParamField>
+<ParamField path="bucket_name" type="string" required>
+S3 bucket name (no s3:// url)
+</ParamField>
+<ParamField path="region" type="string" required>
+S3 bucket region
+</ParamField>
+<ParamField path="wal_path" type="string">
+Path for write-ahead logs. Default `/tmp/wal`
+</ParamField>
+<ParamField path="max_file_age_seconds" type="int">
+Maximum time (in seconds) before WAL are flushed
+</ParamField>
+<ParamField path="encoding" type="string">
+Options: `ndjson`, `json`, `avro`, `parquet`
+
+Default: `ndjson`
+</ParamField>
+<ParamField path="compression" type="string">
+Options: `gzip`, `zstd`, `snappy` (`avro` encoding only), `deflate` (`avro` encoding only)
+
+Default: `None`
+<br/>
+For `parquet` and `avro` this configures _data_ compression. The file is not compressed.
+</ParamField>
 
 Example:
 

@@ -3,9 +3,13 @@ title: "File Sink"
 description: "Write output to a local file"
 ---
 
-**Config**
-- `type: file`
-- `path` (string)
+<ParamField path="type" type="string" required>
+This should be set to `file`
+</ParamField>
+
+<ParamField path="path" type="string" required>
+Filepath to sink data
+</ParamField>
 
 **Example**
 
