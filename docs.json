@@ -46,18 +46,23 @@
           {
             "group": "Sinks",
             "pages": [
+              "sinks/overview",
               "sinks/s3",
               "sinks/file",
-              "sinks/blackhole"
+              "sinks/blackhole",
+              "sinks/encoding",
+              "sinks/compression"
             ]
           },
           {
             "group": "Sources",
             "pages": [
+              "sources/overview",
               "sources/sqs",
               "sources/socket",
               "sources/msk",
-              "sources/file"
+              "sources/file",
+              "sources/decoding"
             ]
           }
         ]
