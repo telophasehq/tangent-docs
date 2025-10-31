@@ -42,30 +42,35 @@
         "groups": [
           {
             "group": "Commands",
+            "icon": "terminal",
             "pages": [
               "cli/overview"
             ]
           },
           {
             "group": "Run server",
+            "icon": "play",
             "pages": [
               "cli/run"
             ]
           },
           {
             "group": "Create a new plugin",
+            "icon": "hammer",
             "pages": [
               "cli/plugin/scaffold"
             ]
           },
           {
             "group": "Compile plugin",
+            "icon": "box",
             "pages": [
               "cli/plugin/compile"
             ]
           },
           {
             "group": "Test locally",
+            "icon": "flask-conical",
             "pages": [
               "cli/bench",
               "cli/plugin/test"
