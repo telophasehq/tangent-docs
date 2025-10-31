@@ -14,7 +14,7 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Home",
+        "tab": "Quickstart",
         "groups": [
           {
             "group": "Getting started",
@@ -30,25 +30,36 @@
       {
         "tab": "Plugins",
         "icon": "plug-zap",
-        "pages": [
-          "plugins/authoring",
-          "plugins/community"
+        "groups": [
+          {
+            "group": "plugins",
+            "pages": [
+              "plugins/authoring",
+              "plugins/community"
+            ]
+          }
         ]
       },
       {
         "tab": "CLI",
         "icon": "square-terminal",
-        "pages": [
-          "cli/overview",
-          "cli/run",
-          "cli/bench",
-          "cli/plugin/scaffold",
-          "cli/plugin/compile",
-          "cli/plugin/test"
+        "groups": [
+          {
+            "group": "cli",
+            "pages": [
+              "cli/overview",
+              "cli/run",
+              "cli/bench",
+              "cli/plugin/scaffold",
+              "cli/plugin/compile",
+              "cli/plugin/test"
+            ]
+          }
         ]
       },
       {
         "tab": "Configuration",
+        "icon": "cog",
         "groups": [
           {
             "group": "tangent.yaml",
@@ -89,7 +100,7 @@
       },
       {
         "tab": "Discord",
-        "icon": "github",
+        "icon": "bot",
         "href": "https://discord.gg/ZUHB3BRa8c"
       }
     ]
