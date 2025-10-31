@@ -14,7 +14,7 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Home",
         "groups": [
           {
             "group": "Getting started",
@@ -24,26 +24,36 @@
               "quickstart",
               "install"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "Plugins",
+        "icon": "plug-zap",
+        "pages": [
+          "plugins/authoring",
+          "plugins/community"
+        ]
+      },
+      {
+        "tab": "CLI",
+        "icon": "square-terminal",
+        "pages": [
+          "cli/overview",
+          "cli/run",
+          "cli/bench",
+          "cli/plugin/scaffold",
+          "cli/plugin/compile",
+          "cli/plugin/test"
+        ]
+      },
+      {
+        "tab": "Configuration",
+        "groups": [
           {
-            "group": "CLI",
-            "icon": "square-terminal",
+            "group": "tangent.yaml",
             "pages": [
-              "cli/overview",
-              "cli/run",
-              "cli/bench",
-              "cli/plugin/scaffold",
-              "cli/plugin/compile",
-              "cli/plugin/test",
               "cli/tangent-yaml"
-            ]
-          },
-          {
-            "group": "Plugins",
-            "icon": "plug-zap",
-            "pages": [
-              "plugins/authoring",
-              "plugins/community"
             ]
           },
           {
@@ -78,50 +88,10 @@
         "href": "https://github.com/telophasehq/tangent/"
       },
       {
-      "tab": "Reference",
-      "groups": [
-        {
-          "group": "API Reference",
-          "pages": ["api/overview", "api/config", "api/cli"]
-        }
-      ]
-    },
-    {
-      "tab": "Blog",
-      "groups": [
-        {
-          "group": "Articles",
-          "pages": ["blog/getting-started", "blog/architecture"]
-        }
-      ]
-    },
-    {
-      "tab": "Feedback",
-      "groups": [
-        {
-          "group": "Community",
-          "pages": ["feedback/issues", "feedback/roadmap"]
-        }
-      ]
-    },
-      {
-      "tab": "Blog",
-      "groups": [
-        {
-          "group": "Articles",
-          "pages": ["blog/getting-started", "blog/architecture"]
-        }
-      ]
-    },
-    {
-      "tab": "Feedback",
-      "groups": [
-        {
-          "group": "Community",
-          "pages": ["feedback/issues", "feedback/roadmap"]
-        }
-      ]
-    }
+        "tab": "Discord",
+        "icon": "github",
+        "href": "https://discord.gg/ZUHB3BRa8c"
+      }
     ]
   },
   "logo": {
