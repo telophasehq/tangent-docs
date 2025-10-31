@@ -1,3 +1,7 @@
 a[href="https://github.com/telophasehq/tangent/"] {
     margin-left: auto !important;
 }
+
+nav-tabs {
+    width: 100% !important;
+}
