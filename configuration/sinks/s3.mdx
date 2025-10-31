@@ -32,11 +32,11 @@ Maximum age (in seconds) before a WAL file is rotated and flushed to S3.
 Defaults to `60`.
 </ParamField>
 <ParamField path="encoding" type="object">
-Controls how Tangent serializes records emitted by this source. See [Encoding](/sinks/encoding).
+Controls how Tangent serializes records emitted by this source. See [Encoding](/configuration/sinks/encoding).
 </ParamField>
 
 <ParamField path="compression" type="object">
-Controls how Tangent compresses payloads emitted by this source. See [Compression](/sinks/compression).
+Controls how Tangent compresses payloads emitted by this source. See [Compression](/configuration/sinks/compression).
 </ParamField>
 
 ---
@@ -88,6 +88,6 @@ sinks:
 
 ## See also
 
-* [`File` sink](/sinks/file) for local files
-* [`Blackhole` sink](/sinks/blackhole) for testing
-* [DAG configuration](/cli/tangent-yaml#dag)
+* [`File` sink](/configuration/sinks/file) for local files
+* [`Blackhole` sink](/configuration/sinks/blackhole) for testing
+* [DAG configuration](/configuration/dag)

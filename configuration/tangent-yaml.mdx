@@ -6,11 +6,11 @@ description: "Top-level config that wires Runtime, Plugins, Sources, Sinks, and 
 `tangent.yaml` declares how Tangent runs: **Runtime** controls batching and workers, **Plugins** define WASM modules, **Sources** and **Sinks** define I/O, and the **DAG** connects them.
 
 Use this page as a map; see the dedicated pages for full schemas and examples:
-- [Runtime](/tangent-yaml/runtime)
-- [Plugins](/tangent-yaml/plugins)
-- [DAG](/tangent-yaml/dag)
-- [Sources](/sources/overview)
-- [Sinks](/sinks/overview)
+- [Runtime](/configuration/tangent-yaml/runtime)
+- [Plugins](/configuration/tangent-yaml/plugins)
+- [DAG](/configuration/tangent-yaml/dag)
+- [Sources](/configuration/sources/overview)
+- [Sinks](/configuration/sinks/overview)
 
 ---
 
@@ -53,27 +53,27 @@ dag:
 ### Runtime
 
 Batching, worker threads, and where compiled plugins live.
-See [Runtime](/tangent-yaml/runtime).
+See [Runtime](/configuration/tangent-yaml/runtime).
 
 ### Plugins
 
 Define each WASM plugin (language, entry point, tests).
-See [Plugins](/tangent-yaml/plugins).
+See [Plugins](/configuration/tangent-yaml/plugins).
 
 ### Sources
 
 Where logs come from (Socket, MSK, SQS, File), plus decoding.
-See [Sources](/sources/overview).
+See [Sources](/configuration/sources/overview).
 
 ### Sinks
 
 Where records go (S3, File, Blackhole), plus encoding/compression.
-See [Sinks](/sinks/overview).
+See [Sinks](/configuration/sinks/overview).
 
 ### DAG
 
 Connect sources → plugins → sinks; the pipeline’s dataflow graph.
-See [DAG](/tangent-yaml/dag).
+See [DAG](/configuration/tangent-yaml/dag).
 
 ---
 

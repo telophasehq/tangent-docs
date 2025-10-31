@@ -12,9 +12,9 @@ They are the **terminal nodes** of the DAG: after records are processed by plugi
 
 | Type | Description | Example |
 |------|--------------|----------|
-| [`s3`](/sinks/s3) | Write to Amazon S3 buckets with WAL durability | `my-bucket` |
-| [`file`](/sinks/file) | Write to local or mounted filesystem paths | `/var/lib/tangent/output.json` |
-| [`blackhole`](/sinks/blackhole) | Discard output (useful for testing) | — |
+| [`s3`](/configuration/sinks/s3) | Write to Amazon S3 buckets with WAL durability | `my-bucket` |
+| [`file`](/configuration/sinks/file) | Write to local or mounted filesystem paths | `/var/lib/tangent/output.json` |
+| [`blackhole`](/configuration/sinks/blackhole) | Discard output (useful for testing) | — |
 
 ---
 
@@ -27,12 +27,12 @@ One of: `s3`, `file`, or `blackhole`.
 
 <ParamField path="encoding" type="object">
 Controls how Tangent serializes records before writing.  
-See [Encoding](/sinks/encoding) for supported formats (`ndjson`, `json`, `avro`, `parquet`).
+See [Encoding](/configuration/sinks/encoding) for supported formats (`ndjson`, `json`, `avro`, `parquet`).
 </ParamField>
 
 <ParamField path="compression" type="object">
 Configures compression for sink objects.  
-See [Compression](/sinks/compression) for algorithm details and levels.
+See [Compression](/configuration/sinks/compression) for algorithm details and levels.
 </ParamField>
 
 ---
@@ -66,9 +66,9 @@ sinks:
 
 ## See also
 
-* [S3 Sink](/sinks/s3)
-* [File Sink](/sinks/file)
-* [Blackhole Sink](/sinks/blackhole)
-* [Encoding](/sinks/encoding)
-* [Compression](/sinks/compression)
-* [DAG](/cli/tangent-yaml#dag)
+* [S3 Sink](/configuration/sinks/s3)
+* [File Sink](/configuration/sinks/file)
+* [Blackhole Sink](/configuration/sinks/blackhole)
+* [Encoding](/configuration/sinks/encoding)
+* [Compression](/configuration/sinks/compression)
+* [DAG](/configuration/dag)

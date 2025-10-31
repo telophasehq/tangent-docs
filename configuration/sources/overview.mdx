@@ -4,7 +4,7 @@ description: "Ingest data from sockets, queues, files, or streaming systems."
 ---
 
 Sources define **where Tangent reads data from** — for example, a local Unix socket, Amazon SQS queue, file, or Kafka/MSK topic.  
-Each source reads raw bytes, applies a configured [`decoding`](/sources/decoding) policy, and emits structured records into Tangent’s pipeline.
+Each source reads raw bytes, applies a configured [`decoding`](/configuration/sources/decoding) policy, and emits structured records into Tangent’s pipeline.
 
 ---
 
@@ -12,10 +12,10 @@ Each source reads raw bytes, applies a configured [`decoding`](/sources/decoding
 
 | Type | Description | Example |
 |------|--------------|----------|
-| [`socket`](/sources/socket) | Local Unix domain socket (fastest for local ingestion) | `/tmp/sidecar.sock` |
-| [`file`](/sources/file) | Read structured logs from local or mounted files | `/var/log/app/access.log` |
-| [`msk`](/sources/msk) | Consume from Amazon MSK (Kafka) topics | `b-1.example.com:9092` |
-| [`sqs`](/sources/sqs) | Poll messages from Amazon SQS queues | `https://sqs.us-east-1.amazonaws.com/...` |
+| [`socket`](/configuration/sources/socket) | Local Unix domain socket (fastest for local ingestion) | `/tmp/sidecar.sock` |
+| [`file`](/configuration/sources/file) | Read structured logs from local or mounted files | `/var/log/app/access.log` |
+| [`msk`](/configuration/sources/msk) | Consume from Amazon MSK (Kafka) topics | `b-1.example.com:9092` |
+| [`sqs`](/configuration/sources/sqs) | Poll messages from Amazon SQS queues | `https://sqs.us-east-1.amazonaws.com/...` |
 
 ---
 
@@ -61,6 +61,6 @@ sources:
 
 ## See also
 
-* [Decoding](/sources/decoding)
-* [Runtime Configuration](/cli/tangent-yaml#runtime)
-* [DAG](/cli/tangent-yaml#dag)
+* [Decoding](/configuration/sources/decoding)
+* [Runtime Configuration](/configuration/runtime)
+* [DAG](/configuration/dag)
