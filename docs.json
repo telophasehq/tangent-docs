@@ -47,7 +47,7 @@
             ]
           },
           {
-            "group": "Run Tangent server",
+            "group": "Run server",
             "pages": [
               "cli/run"
             ]
@@ -55,7 +55,12 @@
           {
             "group": "Create a new plugin",
             "pages": [
-              "cli/plugin/scaffold",
+              "cli/plugin/scaffold"
+            ]
+          },
+          {
+            "group": "Compile plugin",
+            "pages": [
               "cli/plugin/compile"
             ]
           },
