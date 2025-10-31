@@ -23,7 +23,8 @@
             "pages": [
               "index",
               "quickstart",
-              "install"
+              "install",
+              "runtime"
             ]
           }
         ]
