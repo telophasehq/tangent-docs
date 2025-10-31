@@ -1,0 +1,46 @@
+---
+title: "DAG"
+description: "Define the dataflow graph connecting sources, plugins, and sinks."
+---
+
+The **DAG** (Directed Acyclic Graph) defines how data flows through your Tangent pipeline.
+
+---
+
+## Schema
+<ParamField path="dag" type="list">
+Each entry describes a flow from one node to one or more downstream nodes.
+
+
+
+* `from.kind`: `source`, `plugin`, or `sink`
+* `from.name`: name of the node
+* `to`: list of destination nodes
+</ParamField>
+
+---
+
+## Example
+```yaml tangent.yaml icon=settings
+dag:
+  - from:
+      kind: source
+      name: socket_main
+    to:
+      - kind: plugin
+        name: golang
+  - from:
+      kind: plugin
+      name: golang
+    to:
+      - kind: sink
+        name: blackhole
+````
+
+---
+
+### 🧠 Notes
+
+* The DAG determines execution order.
+* Multiple plugins or sinks can receive data from one source.
+* Cycles are not allowed (it must remain acyclic).

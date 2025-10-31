@@ -37,11 +37,26 @@
           {
             "group": "Commands",
             "pages": [
-              "cli/overview",
-              "cli/run",
-              "cli/bench",
+              "cli/overview"
+            ]
+          },
+          {
+            "group": "Run Tangent server",
+            "pages": [
+              "cli/run"
+            ]
+          },
+          {
+            "group": "Create a new plugin",
+            "pages": [
               "cli/plugin/scaffold",
-              "cli/plugin/compile",
+              "cli/plugin/compile"
+            ]
+          },
+          {
+            "group": "Test locally",
+            "pages": [
+              "cli/bench",
               "cli/plugin/test"
             ]
           }
@@ -53,32 +68,52 @@
         "groups": [
           {
             "group": "tangent.yaml",
+            "icon": "file-cog",
+            "pages": ["configuration/tangent-yaml"]
+          },
+          {
+            "group": "Runtime",
+            "icon": "cpu",
+            "pages": ["configuration/runtime"]
+          },
+          {
+            "group": "Plugins",
+            "icon": "plug-zap",
+            "pages": ["configuration/plugins"]
+          },
+          {
+            "group": "DAG",
+            "icon": "git-branch",
+            "pages": ["configuration/dag"]
+          },
+          {
+            "group": "Sources",
+            "icon": "cloud-download",
             "pages": [
-              "cli/tangent-yaml"
+              "configuration/sources/overview",
+              "configuration/sources/msk",
+              "configuration/sources/sqs",
+              "configuration/sources/socket",
+              "configuration/sources/file",
+              "configuration/sources/decoding"
             ]
           },
           {
             "group": "Sinks",
             "icon": "cloud-upload",
             "pages": [
-              "sinks/overview",
-              "sinks/s3",
-              "sinks/file",
-              "sinks/blackhole",
-              "sinks/encoding",
-              "sinks/compression"
+              "configuration/sinks/overview",
+              "configuration/sinks/s3",
+              "configuration/sinks/file",
+              "configuration/sinks/blackhole"
             ]
           },
           {
-            "group": "Sources",
-            "icon": "cloud-download",
+            "group": "Common options",
+            "icon": "sliders-horizontal",
             "pages": [
-              "sources/overview",
-              "sources/sqs",
-              "sources/socket",
-              "sources/msk",
-              "sources/file",
-              "sources/decoding"
+              "configuration/sinks/encoding",
+              "configuration/sinks/compression"
             ]
           }
         ]

@@ -1,0 +1,87 @@
+---
+title: "tangent.yaml — Overview"
+description: "Top-level config that wires Runtime, Plugins, Sources, Sinks, and the DAG."
+---
+
+`tangent.yaml` declares how Tangent runs: **Runtime** controls batching and workers, **Plugins** define WASM modules, **Sources** and **Sinks** define I/O, and the **DAG** connects them.
+
+Use this page as a map; see the dedicated pages for full schemas and examples:
+- [Runtime](/tangent-yaml/runtime)
+- [Plugins](/tangent-yaml/plugins)
+- [DAG](/tangent-yaml/dag)
+- [Sources](/sources/overview)
+- [Sinks](/sinks/overview)
+
+---
+
+## Minimal example
+
+```yaml tangent.yaml icon=settings
+runtime:
+  plugins_path: "plugins/"
+  batch_size: 256
+  batch_age: 5
+  workers: 16
+
+plugins:
+  golang:
+    module_type: go
+    path: .
+
+sources:
+  socket_main:
+    type: socket
+    socket_path: "/tmp/sidecar.sock"
+
+sinks:
+  blackhole:
+    type: blackhole
+
+dag:
+  - from: { kind: source, name: socket_main }
+    to:
+      - { kind: plugin, name: golang }
+  - from: { kind: plugin, name: golang }
+    to:
+      - { kind: sink, name: blackhole }
+````
+
+---
+
+## What lives where
+
+### Runtime
+
+Batching, worker threads, and where compiled plugins live.
+See [Runtime](/tangent-yaml/runtime).
+
+### Plugins
+
+Define each WASM plugin (language, entry point, tests).
+See [Plugins](/tangent-yaml/plugins).
+
+### Sources
+
+Where logs come from (Socket, MSK, SQS, File), plus decoding.
+See [Sources](/sources/overview).
+
+### Sinks
+
+Where records go (S3, File, Blackhole), plus encoding/compression.
+See [Sinks](/sinks/overview).
+
+### DAG
+
+Connect sources → plugins → sinks; the pipeline’s dataflow graph.
+See [DAG](/tangent-yaml/dag).
+
+---
+
+## Notes
+
+* Under `runtime`, the key is **`plugins_path`** (not `path`).
+* “Number of **worker** threads” (not “workers threads”).
+* In the **Sources** example, the key is `socket_path`.
+* In the **Sinks** blurb/link, say “See **Sinks**” (not “See Sources”).
+* The DAG must remain acyclic; you can fan-out to multiple `to:` nodes.
+

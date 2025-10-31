@@ -1,0 +1,43 @@
+---
+title: "Runtime"
+description: "Control batching, worker threads, and plugin paths."
+---
+
+The **Runtime** section configures how Tangent executes and batches logs in memory before handing them to plugins.
+
+---
+
+## Schema
+<ParamField path="plugins_path" type="string">
+Path to compiled plugins. Defaults to `plugins/`.
+</ParamField>
+
+<ParamField path="batch_size" type="int">
+Maximum buffered size (KB) before flushing. Defaults to `256`.
+</ParamField>
+
+<ParamField path="batch_age" type="int">
+Maximum time (ms) logs are buffered before flush. Defaults to `5`.
+</ParamField>
+
+<ParamField path="workers" type="int">
+Number of worker threads to spawn. Defaults to the number of CPUs.
+</ParamField>
+
+---
+
+## Example
+```yaml tangent.yaml icon=settings
+runtime:
+  plugins_path: "plugins/"
+  batch_size: 1024
+  batch_age: 5
+  workers: 16
+````
+
+---
+
+### 🧠 Notes
+
+* `batch_size` and `batch_age` together control flush cadence.
+* `workers` determines concurrency; higher values increase throughput.

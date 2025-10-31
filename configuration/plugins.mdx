@@ -1,0 +1,42 @@
+---
+title: "Plugins"
+description: "Define plugins used by Tangent pipelines."
+---
+
+The **Plugins** section declares each WASM plugin and its configuration.  
+Each plugin is defined under a user-chosen key and referenced in the DAG.
+
+---
+
+## Schema
+<ParamField path="module_type" type="string" required>
+Language used by the plugin. Options: `go`, `py`.
+</ParamField>
+
+<ParamField path="path" type="string" required>
+Plugin entry point. For Go use `.`, for Python use a file name (e.g., `mapper.py`).
+</ParamField>
+
+<ParamField path="tests" type="list">
+List of input/expected test pairs. `input` and `expected` are filepaths.
+</ParamField>
+
+---
+
+## Example
+```yaml tangent.yaml icon=settings
+plugins:
+  golang:
+    module_type: go
+    path: .
+    tests:
+      - input: tests/input.json
+        expected: tests/expected.json
+````
+
+---
+
+### 🧠 Notes
+
+* The plugin name (`golang` above) is referenced in the DAG.
+* Test files are optional but recommended for validating mappers.
