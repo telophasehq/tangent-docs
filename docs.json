@@ -121,13 +121,7 @@
               "configuration/sinks/overview",
               "configuration/sinks/s3",
               "configuration/sinks/file",
-              "configuration/sinks/blackhole"
-            ]
-          },
-          {
-            "group": "Common options",
-            "icon": "sliders-horizontal",
-            "pages": [
+              "configuration/sinks/blackhole",
               "configuration/sinks/encoding",
               "configuration/sinks/compression"
             ]
