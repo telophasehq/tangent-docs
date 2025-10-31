@@ -31,11 +31,13 @@
       {
         "tab": "CLI",
         "icon": "square-terminal",
+        "pages": [
+          "cli/overview"
+        ],
         "groups": [
           {
-            "group": "cli",
+            "group": "Commands",
             "pages": [
-              "cli/overview",
               "cli/run",
               "cli/bench",
               "cli/plugin/scaffold",
@@ -86,7 +88,7 @@
         "icon": "plug-zap",
         "groups": [
           {
-            "group": "plugins",
+            "group": "Plugins",
             "pages": [
               "plugins/authoring",
               "plugins/community"
