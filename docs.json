@@ -27,19 +27,7 @@
           }
         ]
       },
-      {
-        "tab": "Plugins",
-        "icon": "plug-zap",
-        "groups": [
-          {
-            "group": "plugins",
-            "pages": [
-              "plugins/authoring",
-              "plugins/community"
-            ]
-          }
-        ]
-      },
+
       {
         "tab": "CLI",
         "icon": "square-terminal",
@@ -89,6 +77,19 @@
               "sources/msk",
               "sources/file",
               "sources/decoding"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Plugins",
+        "icon": "plug-zap",
+        "groups": [
+          {
+            "group": "plugins",
+            "pages": [
+              "plugins/authoring",
+              "plugins/community"
             ]
           }
         ]
