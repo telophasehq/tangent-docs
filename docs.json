@@ -23,7 +23,13 @@
             "pages": [
               "index",
               "quickstart",
-              "install",
+              "install"
+            ]
+          },
+          {
+            "group": "Deep dive",
+            "icon": "brain",
+            "pages": [
               "runtime"
             ]
           }
