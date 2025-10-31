@@ -14,7 +14,8 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Quickstart",
+        "tab": "Home",
+        "icon": "house",
         "groups": [
           {
             "group": "Getting started",
@@ -31,10 +32,12 @@
       {
         "tab": "CLI",
         "icon": "square-terminal",
-        "pages": [
-          "cli/overview"
-        ],
         "groups": [
+          {
+            "pages": [
+              "cli/overview"
+            ]
+          },
           {
             "group": "Commands",
             "pages": [
@@ -111,18 +114,6 @@
   "logo": {
     "light": "logo-light.svg",
     "dark": "logo-dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Discord",
-        "href": "https://discord.gg/yA8dFdHP"
-      },
-      {
-        "label": "Github",
-        "href": "https://github.com/telophasehq/tangent/"
-      }
-    ]
   },
   "background": {
     "decoration": "grid",
