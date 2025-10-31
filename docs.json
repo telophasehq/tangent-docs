@@ -38,11 +38,11 @@
 
       {
         "tab": "CLI",
-        "icon": "square-terminal",
+        "icon": "terminal",
         "groups": [
           {
             "group": "Commands",
-            "icon": "terminal",
+            "icon": "square-terminal",
             "pages": [
               "cli/overview"
             ]
