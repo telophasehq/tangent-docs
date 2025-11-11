@@ -6,7 +6,7 @@ mode: "wide"
 
 ## Tangent runtime: how we get near‑native speed
 
-This doc explains, in concrete terms, how Tangent’s runtime achieves near‑native throughput while running user plugins in WebAssembly. The audience is experienced, performance‑sensitive engineers who want to see the real mechanics: data movement, copying behavior, SIMD, borrowing across the host/guest boundary, batching/scheduling, and fan‑out.
+This doc explains, in concrete terms, how Tangent’s runtime achieves near‑native throughput with WASM plugins.
 
 **tl;dr**
 

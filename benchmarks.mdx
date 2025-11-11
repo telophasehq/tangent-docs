@@ -1,0 +1,35 @@
+---
+title: 'Benchmarks'
+description: 'Tangent vs Native'
+---
+
+tl;dr –
+## Tests
+[Golang control](https://github.com/telophasehq/benchmarks/tree/main/golang-control)
+```sh
+end-to-end: uploaded=4237.13 MB over 30.02s → 141.15 MB/s
+bytes consumed: 4580.64 MB → 152.59 MB/s
+```
+
+[Tangent with Golang WASM Plugin](https://github.com/telophasehq/tangent/tree/main/examples/golang)
+```sh
+end-to-end: uploaded=6989.03 MB over 30.00s → 232.95 MB/s
+bytes consumed: 7556.21 MB → 251.86 MB/s
+```
+
+[Python control](https://github.com/telophasehq/benchmarks/tree/main/python-control)
+```sh
+end-to-end: uploaded=490.80 MB over 30.11s → 16.30 MB/s
+bytes consumed: 525.13 MB → 17.44 MB/s
+```
+
+[Tangent with Python WASM Plugin](https://github.com/telophasehq/tangent/tree/main/examples/python)
+```sh
+end-to-end: uploaded=2964.45 MB over 29.99s → 98.86 MB/s
+bytes consumed: 3176.92 MB → 105.95 MB/s
+```
+
+
+Tangent with Go WASM plugin is **26%** faster end-to-end than an equivalent pure Go service. Tangent with Python WASM plugin is **13%** faster end-to-end than an equivalent pure Python service.
+
+
