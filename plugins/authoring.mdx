@@ -18,11 +18,13 @@ Name and version of your plugin
     <CodeGroup>
 
     ```go main.go
-    mapper.Exports.Metadata = func() mapper.Meta {
-        return mapper.Meta{
-            Name:    "golang-example",
-            Version: "0.1.0",
-        }
+    import (
+    	tangent_sdk "github.com/telophasehq/tangent-sdk-go"
+    )
+    
+    var Metadata = tangent_sdk.Metadata{
+    	Name:    "golang",
+    	Version: "0.2.0",
     }
     ```
 
@@ -42,6 +44,8 @@ Name and version of your plugin
     <CodeGroup>
 
     ```rust lib.rs
+    use exports::tangent::logs::mapper::{Meta};
+
     fn metadata() -> Meta {
         Meta {
             name: "rust".to_string(),
@@ -63,20 +67,16 @@ Used to tell the host which logs to send to the mapper
     <CodeGroup>
 
     ```go main.go
-    mapper.Exports.Probe = func() cm.List[mapper.Selector] {
-      return cm.ToList([]mapper.Selector{
-          {
-              Any: cm.ToList([]mapper.Pred{}),
-              All: cm.ToList([]mapper.Pred{
-                  mapper.PredEq(
-                      cm.Tuple[string, mapper.Scalar]{
-                          F0: "source.name",
-                          F1: log.ScalarStr("myservice"),
-                      },
-                  )}),
-              None: cm.ToList([]mapper.Pred{}),
-          },
-      })
+    import (
+    	tangent_sdk "github.com/telophasehq/tangent-sdk-go"
+    )
+
+    var selectors = []tangent_sdk.Selector{
+    	{
+    		All: []tangent_sdk.Predicate{
+    			tangent_sdk.EqString("source.name", "myservice"),
+    		},
+    	},
     }
     ```
 
@@ -107,6 +107,9 @@ Used to tell the host which logs to send to the mapper
     <CodeGroup>
 
     ```rust lib.rs
+    use exports::tangent::logs::mapper::{Pred, Selector};
+    use tangent::logs::log::{Scalar};
+    
     fn probe() -> Vec<Selector> {
         vec![Selector {
             any: Vec::new(),
@@ -146,32 +149,36 @@ Performance note: Always prefer to fetch scalar values from the log. Scalars do 
     <CodeGroup>
 
     ```go main.go
+    import (
+    	tangent_sdk "github.com/telophasehq/tangent-sdk-go"
+    	"github.com/telophasehq/tangent-sdk-go/helpers"
+    )
+
     type ExampleOutput struct {
     	Msg      string   `json:"message"`
     }
 
-    mapper.Exports.ProcessLogs = func(input cm.List[log.Logview]) (res cm.Result[cm.List[uint8], cm.List[uint8], string]) {
-        buf := bufPool.Get().(*bytes.Buffer)
-        buf.Reset()
-        
-        // take an owned copy of the input.
-        var items []log.Logview
-        items = append(items, input.Slice()...)
-        for idx := range items {
-            var out ExampleOutput
-        
-            lv := log.Logview(items[idx])
-        
-            // Get String
-            msg := tangenthelpers.GetString(lv, "msg")
-            if msg != nil {
-                out.Msg = *msg
-            }
-          }
-          res.SetOK(cm.ToList(buf.Bytes()))
-          bufPool.Put(buf)
-          return
+    func ExampleMapper(lv tangent_sdk.Log) (ExampleOutput, error) {
+    	var out ExampleOutput
+    	// Get String
+    	msg := helpers.GetString(lv, "msg")
+    	if msg != nil {
+    		out.Msg = *msg
+    	}
+    
+    	return out, nil
     }
+    
+    func init() {
+    	tangent_sdk.Wire[ExampleOutput](
+    		Metadata,
+    		selectors,
+    		ExampleMapper,
+    		nil,
+    	)
+    }
+    
+    func main() {}
     ```
 
     </CodeGroup>
@@ -203,6 +210,8 @@ Performance note: Always prefer to fetch scalar values from the log. Scalars do 
     <CodeGroup>
 
     ```rust lib.rs
+    use exports::tangent::logs::mapper::Guest;
+    use tangent::logs::log::{Logview, Scalar};
 
     #[derive(Default, Serialize)]
     struct ExampleOutput {
