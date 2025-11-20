@@ -38,6 +38,20 @@ Name and version of your plugin
 
     </CodeGroup>
   </Tab>
+  <Tab title="Rust">
+    <CodeGroup>
+
+    ```rust lib.rs
+    fn metadata() -> Meta {
+        Meta {
+            name: "rust".to_string(),
+            version: "0.1.0".to_string(),
+        }
+    }
+    ```
+
+    </CodeGroup>
+  </Tab>
 </Tabs>
 
 ### Probe
@@ -89,6 +103,24 @@ Used to tell the host which logs to send to the mapper
 
     </CodeGroup>
   </Tab>
+  <Tab title="Rust">
+    <CodeGroup>
+
+    ```rust lib.rs
+    fn probe() -> Vec<Selector> {
+        vec![Selector {
+            any: Vec::new(),
+            all: vec![Pred::Eq((
+                "source.name".to_string(),
+                Scalar::Str("myservice".to_string()),
+            ))],
+            none: Vec::new(),
+        }]
+    }
+    ```
+
+    </CodeGroup>
+  </Tab>
 </Tabs>
 
 Will send all logs with
@@ -114,7 +146,10 @@ Performance note: Always prefer to fetch scalar values from the log. Scalars do 
     <CodeGroup>
 
     ```go main.go
-    // scaffolded project provides imports and types
+    type ExampleOutput struct {
+    	Msg      string   `json:"message"`
+    }
+
     mapper.Exports.ProcessLogs = func(input cm.List[log.Logview]) (res cm.Result[cm.List[uint8], cm.List[uint8], string]) {
         buf := bufPool.Get().(*bytes.Buffer)
         buf.Reset()
@@ -151,11 +186,6 @@ Performance note: Always prefer to fetch scalar values from the log. Scalars do 
           with lv:
               out = {
                   "message": "",
-                  "level": "",
-                  "seen": 0,
-                  "duration": 0.0,
-                  "service": "",
-                  "tags": None,
               }
     
               # get string
@@ -163,36 +193,39 @@ Performance note: Always prefer to fetch scalar values from the log. Scalars do 
               if s is not None and hasattr(s, "value"):
                   out["message"] = s.value
     
-              # get dot path
-              s = lv.get("msg.level")
-              if s is not None and hasattr(s, "value"):
-                  out["level"] = s.value
-    
-              # get int
-              s = lv.get("seen")
-              if s is not None and hasattr(s, "value"):
-                  out["seen"] = s.value
-    
-              # get float
-              s = lv.get("duration")
-              if s is not None and hasattr(s, "value"):
-                  out["duration"] = s.value
-    
-              # get value from nested json
-              s = lv.get("source.name")
-              if s is not None and hasattr(s, "value"):
-                  out["service"] = s.value
-    
-              # get string list
-              lst = lv.get_list("tags")
-              if lst is not None:
-                  tags: List[str] = []
-                  for item in lst:
-                      tags.append(item.value)
-                  out["tags"] = tags
-    
               buf.extend(json.dumps(out).encode('utf-8') + b"\n")
       return bytes(buf)
+    ```
+
+    </CodeGroup>
+  </Tab>
+  <Tab title="Rust">
+    <CodeGroup>
+
+    ```rust lib.rs
+
+    #[derive(Default, Serialize)]
+    struct ExampleOutput {
+        message: String,
+    }
+
+    fn process_logs(input: Vec<Logview>) -> Result<Vec<u8>, String> {
+        let mut buf = Vec::new();
+
+        for lv in input {
+            let mut out = ExampleOutput::default();
+
+            if let Some(val) = lv.get("msg").and_then(string_from_scalar) {
+                out.message = val;
+            }
+
+            let json_line = serde_json::to_vec(&out).map_err(|e| e.to_string())?;
+            buf.extend(json_line);
+            buf.push(b'\n');
+        }
+
+        Ok(buf)
+    }
     ```
 
     </CodeGroup>

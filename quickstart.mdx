@@ -18,10 +18,12 @@ curl --proto '=https' --tlsv1.2 -LsSf https://github.com/Santiago-Labs/tangent/r
   <Step title="Scaffold a plugin">
 
 ```bash
-# Create a new plugin in Go or Python
+# Create a new plugin in Go, Python, or Rust
 tangent plugin scaffold --lang go --name hello-logs
 # or:
 tangent plugin scaffold --lang py --name hello-logs
+# or:
+tangent plugin scaffold --lang rust --name hello-logs
 ```
 Scaffold creates a minimal working plugin with tests.
   </Step>
